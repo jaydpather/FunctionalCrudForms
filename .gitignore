@@ -1,0 +1,15 @@
+.next/
+
+.ionide/
+
+node_modules/
+node/server/fableImports
+
+
+microservices/RandomNumberMicroservice/bin/
+microservices/RandomNumberMicroservice/obj/
+microservices/RandomNumberMicroservice/.ionide/
+
+backend/.ionide/
+backend/bin/
+backend/obj/
