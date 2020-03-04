@@ -6,9 +6,9 @@ This  is a demo app of CRUD forms in F#, a functional langauge. The user can cre
 
 This app consists of several projects:
   * __/node__ folder
-    * NextJS application
     * used to load UI, but not data
-    * uses React with either client-side or server-side rendering
+    * NextJS application
+      * uses React with either client-side or server-side rendering
     * references JS files produced by Fable project
     * to run: 
       * cd node
@@ -28,18 +28,21 @@ This app consists of several projects:
     * used to load or save data, but not for loading the UI
     * F#, .Net Core
     * uses RabbitMQ to call microservices
+      * only calls microservices, doesn't do any logic itself
+      * returns response from microservice back to client
   * __/microservices__ folder:
     * microservices that run on the back end
     * F#, .Net Core Console apps
     * uses RabbitMQ to return responses to back end web service
+    * all logic, loading, and saving, are done by microservices, not back end
 
 
 ## RABBIT MQ
 
 backend and microservices require RabbitMQ to be running:
-    * to start RabbitMQ: 
-      * run RabbitMQ command prompt as administrator (from start menu)
-      * run this command: rabbitmqctl start_app
+  * to start RabbitMQ: 
+    * run RabbitMQ command prompt as administrator (from start menu)
+    * run this command: rabbitmqctl start_app
 
 RabbitMQ Management Console:
   * http://localhost:15672/
