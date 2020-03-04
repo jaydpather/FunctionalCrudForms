@@ -37,7 +37,7 @@ This app consists of several projects:
     * all logic, loading, and saving, are done by microservices, not back end
 
 
-## RABBIT MQ
+## Rabbit MQ
 
 backend and microservices require RabbitMQ to be running:
   * to start RabbitMQ: 
