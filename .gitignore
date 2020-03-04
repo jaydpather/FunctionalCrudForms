@@ -10,6 +10,6 @@ microservices/RandomNumberMicroservice/bin/
 microservices/RandomNumberMicroservice/obj/
 microservices/RandomNumberMicroservice/.ionide/
 
-backend/.ionide/
-backend/bin/
-backend/obj/
+backend-crud/.ionide/
+backend-crud/bin/
+backend-crud/obj/
