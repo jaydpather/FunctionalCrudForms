@@ -5,7 +5,7 @@ const axios = require('axios');
 export default class extends Component {
   submitForm() {
     axios.get("http://localhost:5000/employee/create").then(function (response) {
-      alert(JSON.stringify(response.data.status));
+      alert(JSON.stringify(response.data.Status));
     })
   }
 

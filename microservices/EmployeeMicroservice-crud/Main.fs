@@ -13,6 +13,10 @@ type RandomNumber = {
     Value: int;
 }
 
+type SuccessStatus = {
+    Status: string;
+}
+
 let convertToDictionary (record) =
     seq {
         //todo: load test to see how slow Reflection is
@@ -41,10 +45,10 @@ let startMsgQueueListener () =
     factory.HostName <- "localhost"
     use connection = factory.CreateConnection()
     use channel = connection.CreateModel()
-    let queueResult = channel.QueueDeclare(queue = "rpc_queue", durable = false, exclusive = false, autoDelete = false, arguments = null)
+    let queueResult = channel.QueueDeclare(queue = "employee", durable = false, exclusive = false, autoDelete = false, arguments = null)
     let consumer = QueueingBasicConsumer(channel)
     
-    channel.BasicConsume(queue = "rpc_queue", autoAck = true, consumer = consumer) |> ignore
+    channel.BasicConsume(queue = "employee", autoAck = true, consumer = consumer) |> ignore
     let random = Random()
     while true do   
         let ea = consumer.Queue.Dequeue() //:> BasicDeliverEventArgs
@@ -56,7 +60,9 @@ let startMsgQueueListener () =
         let recordToWrite = { Value = random.Next() }
         writeToMongo recordToWrite
 
-        let responseString = recordToWrite.ToJson() //"{\"data\":" + responseValue.ToString() + "}"
+
+        let status = { Status = "Success" }
+        let responseString = status.ToJson() //"{\"data\":" + responseValue.ToString() + "}"
         let responseBytes = Encoding.UTF8.GetBytes(responseString)
         let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
         channel.BasicPublish(addr = addr, basicProperties = replyProps, body = responseBytes)
@@ -66,6 +72,6 @@ let startMsgQueueListener () =
     
 [<EntryPoint>]
 let main argv =
-    printfn "RandomNumberMicroservice running"
+    printfn "Employee microservice running"
     startMsgQueueListener ()
     0 // return an integer exit code

@@ -22,11 +22,11 @@ type Startup() =
         app.UseRouting() |> ignore
         
         app.UseEndpoints(fun endpoints ->
-            // endpoints.MapGet("/data/RandomNumbers/InsertOne", fun context -> RandomNumbers.insertOne context) //todo: why do we get a compile error here if this is not a lambda? Can't see why the 2nd param can't just be RandomNumbers.insertOne, instead of a lambda that calls RandomNumbers.insertOne
-            endpoints.MapGet("/employee/create", fun (context:HttpContext) -> 
-                printfn("test") |> ignore
-                context.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
-                context.Response.WriteAsync("{\"status\":\"success\" }"
-                    ))
+             endpoints.MapGet("/employee/create", fun context -> Employee.create context) //todo: why do we get a compile error here if this is not a lambda? Can't see why the 2nd param can't just be RandomNumbers.insertOne, instead of a lambda that calls RandomNumbers.insertOne
+            // endpoints.MapGet("/employee/create", fun (context:HttpContext) -> 
+            //     printfn("test") |> ignore
+            //     context.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
+            //     context.Response.WriteAsync("{\"status\":\"success\" }"
+            //         ))
                 |> ignore
             ) |> ignore    

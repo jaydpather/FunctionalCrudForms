@@ -38,7 +38,7 @@ let createClient () =
     let request = "request"
     let msgBytes = Encoding.UTF8.GetBytes(request)
 
-    channel.BasicPublish(exchange=String.Empty, routingKey="rpc_queue", basicProperties=props, body=msgBytes)
+    channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
 
     channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
 

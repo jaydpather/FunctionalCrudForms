@@ -6,9 +6,9 @@ node_modules/
 node/server/fableImports
 
 
-microservices/RandomNumberMicroservice/bin/
-microservices/RandomNumberMicroservice/obj/
-microservices/RandomNumberMicroservice/.ionide/
+microservices/EmployeeMicroservice-crud/bin/
+microservices/EmployeeMicroservice-crud/obj/
+microservices/EmployeeMicroservice-crud/.ionide/
 
 backend-crud/.ionide/
 backend-crud/bin/

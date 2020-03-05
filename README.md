@@ -23,7 +23,7 @@ This app consists of several projects:
       * example: validation logic
       * client runs the transpiled JS form of the F# code in the browser
       * microservices reference the compiled F# DLL's
-  * __/backend__ folder: 
+  * __/backend-crud__ folder: 
     * back end web service
     * used to load or save data, but not for loading the UI
     * F#, .Net Core
