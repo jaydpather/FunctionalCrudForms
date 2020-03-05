@@ -9,8 +9,8 @@ open MongoDB.Driver
 open MongoDB.Bson
 open Microsoft.FSharp.Reflection
 
-type RandomNumber = {
-    Value: int;
+type Employee = {
+    Name: string;
 }
 
 type SuccessStatus = {
@@ -29,8 +29,8 @@ let convertToDictionary (record) =
 
 let writeToMongo record = 
     let client = MongoClient()
-    let database = client.GetDatabase("FirstRabbitMQApp")
-    let collection = database.GetCollection<BsonDocument>("RandomNumbers");
+    let database = client.GetDatabase("FunctionalCrudForms")
+    let collection = database.GetCollection<BsonDocument>("Employee");
     //let record = { Value = 456 }
     let document = 
         record 
@@ -57,7 +57,7 @@ let startMsgQueueListener () =
         let replyProps = channel.CreateBasicProperties()
         replyProps.CorrelationId <- props.CorrelationId
         let message = Encoding.UTF8.GetString(body)
-        let recordToWrite = { Value = random.Next() }
+        let recordToWrite = { Name = "John" }
         writeToMongo recordToWrite
 
 
