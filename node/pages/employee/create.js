@@ -5,9 +5,16 @@ const axios = require('axios');
 export default class extends Component {
   //todo: submitForm() should be written in F#
   submitForm() {
-    axios.get("http://localhost:5000/employee/create").then(function (response) {
-      alert(JSON.stringify(response.data.Status));
-    })
+    //todo: get whole form as one JSON object
+    var name = document.getElementById("txtName").value
+    var data = { Name:name }
+    axios.post("http://localhost:5000/employee/create", JSON.stringify(data))
+      .then(function (response) {
+        alert(response.data.Status);
+      })
+      .catch(function(error){
+        alert(error);
+      })
   }
 
   render () {

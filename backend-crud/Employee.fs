@@ -7,7 +7,8 @@ open System.Collections.Concurrent
 open System.Text
 open System
 open System.Collections.Generic
-
+open System.IO
+open Microsoft.FSharp.Control
 
 type RPCInfo = {
     connection : IConnection;
@@ -22,7 +23,7 @@ let onMessageReceived (respQueue:BlockingCollection<string>) correlationId (ea:B
     if(ea.BasicProperties.CorrelationId = correlationId) then
         respQueue.Add(response)
 
-let createClient () = 
+let createClient (requestJsonString:string) = 
     let factory = ConnectionFactory()
     factory.HostName <- "localhost" //todo: does F# have object initializer?
     let respQueue = new BlockingCollection<string>()
@@ -35,8 +36,7 @@ let createClient () =
     props.ReplyTo <- replyQueueName
     consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
     
-    let request = "request"
-    let msgBytes = Encoding.UTF8.GetBytes(request)
+    let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
 
     channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
 
@@ -53,7 +53,12 @@ let createClient () =
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 let create (httpContext:HttpContext) =
-    let rpcInfo = createClient ()
+    use reader = new StreamReader(httpContext.Request.Body)
+    let bodyTask = reader.ReadToEndAsync()
+    bodyTask.Wait() //todo: research F# await syntax
+    let body = bodyTask.Result
+
+    let rpcInfo = createClient body
     
     let responseString = rpcInfo.respQueue.Take()
     httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")

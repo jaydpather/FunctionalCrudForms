@@ -8,6 +8,7 @@ open RabbitMQ.Client
 open MongoDB.Driver
 open MongoDB.Bson
 open Microsoft.FSharp.Reflection
+open Newtonsoft.Json
 
 type Employee = {
     Name: string;
@@ -25,7 +26,6 @@ let convertToDictionary (record) =
         for prop in FSharpType.GetRecordFields(record.GetType()) -> 
         prop.Name, prop.GetValue(record)
     } |> dict
-
 
 let writeToMongo record = 
     let client = MongoClient()
@@ -57,8 +57,9 @@ let startMsgQueueListener () =
         let replyProps = channel.CreateBasicProperties()
         replyProps.CorrelationId <- props.CorrelationId
         let message = Encoding.UTF8.GetString(body)
-        let recordToWrite = { Name = "John" }
-        writeToMongo recordToWrite
+
+        let employeeObj = JsonConvert.DeserializeObject<Employee>(message)
+        writeToMongo employeeObj
 
 
         let status = { Status = "Success" }
