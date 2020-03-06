@@ -74,5 +74,7 @@ let startMsgQueueListener () =
 [<EntryPoint>]
 let main argv =
     printfn "Employee microservice running"
+    let foo = MessageQueueLayer.MessageQueueLayer.foo()
+    printfn "foo %i" foo
     startMsgQueueListener ()
     0 // return an integer exit code

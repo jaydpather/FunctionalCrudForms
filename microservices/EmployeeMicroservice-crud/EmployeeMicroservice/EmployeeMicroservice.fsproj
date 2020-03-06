@@ -4,6 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MessageQueueLayer\MessageQueueLayer.fsproj">
+      <Name>MessageQueueLayer.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
