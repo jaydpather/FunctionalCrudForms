@@ -55,8 +55,19 @@ let createClient (requestJsonString:string) =
 let create (httpContext:HttpContext) =
     use reader = new StreamReader(httpContext.Request.Body)
     let bodyTask = reader.ReadToEndAsync()
-    bodyTask.Wait() //todo: research F# await syntax
+    bodyTask.Wait()
     let body = bodyTask.Result
+    //let body = bodyTask.GetAwaiter().GetResult() 
+    (*
+        * todo: confirm with a load test whether or not this gives more scalability than doing bodyTask.Wait() 
+          * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
+          * Jayd's opinion: bodyTask.Wait() is more scalable b/c it DOESN'T create a new thread
+            * .NET creates a new thread for each request
+              * this means other users never have to wait for this thread
+              * since we're on the back end, there's nothing else for this thread to do. (unlike the UI, where the window appears to be frozen b/c it can't be dragged while the UI thread is blocked)
+              * creating more threads means the server spends more time switching between threads
+              * if I wanted to run some other code while waiting to read the stream, I would run that code in another thread
+    *)
 
     let rpcInfo = createClient body
     
