@@ -5,6 +5,9 @@
 node_modules/
 node/server/fableImports
 
+Fable/UI/bin/
+Fable/UI/obj/
+Fable/public/
 
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/bin/
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/obj/

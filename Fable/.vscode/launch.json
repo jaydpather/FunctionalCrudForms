@@ -1,0 +1,20 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Client-Chrome",
+            "type": "chrome",
+            "request": "launch",
+            //"preLaunchTask": "build-fable", //todo: use ProblemMatcher property so that VSCode can tell when the build-fable task is done
+            "url": "http://localhost:3000",
+            "webRoot": "C:\\Users\\jaydp\\Documents\\Github\\FunctionalCrudForms\\Fable",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///*": "${workspaceFolder}/*",
+            }
+        }
+    ]
+}

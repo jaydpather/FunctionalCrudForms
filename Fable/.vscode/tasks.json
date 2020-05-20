@@ -1,0 +1,12 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-fable",
+            "command": "npm",
+            "args": ["run-script", "start"],
+            "type": "shell",
+            "group": "build"
+        }
+    ]
+}

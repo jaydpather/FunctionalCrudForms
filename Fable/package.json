@@ -1,0 +1,33 @@
+{
+  "name": "FunctionalCrudForms-fable",
+  "version": "1.0.0",
+  "description": "F# libraries called by the front end.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --watch",
+    "build": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaydpather/FunctionalCrudForms.git"
+  },
+  "keywords": [
+    "F#"
+  ],
+  "author": "Jayd Pather",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/jaydpather/FunctionalCrudForms/issues"
+  },
+  "homepage": "https://github.com/jaydpather/FunctionalCrudForms#readme",
+  "devDependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.8.3",
+    "fable-compiler": "^2.4.12",
+    "fable-loader": "^2.1.8"
+  }
+}
