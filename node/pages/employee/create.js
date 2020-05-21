@@ -3,7 +3,6 @@ import Layout from '../../components/MyLayout';
 const axios = require('axios');
 
 export default class extends Component {
-  //todo: submitForm() should be written in F#
   submitForm() {
     //todo: get whole form as one JSON object
     var name = document.getElementById("txtName").value
@@ -60,6 +59,9 @@ export default class extends Component {
             <div id="divFailureMsg" style={failureMsgStyle}>
               Unable to save: unknown error occurred.
             </div>
+            
+            <br />
+
         </div>
       </Layout>
     )

@@ -21,13 +21,21 @@
   },
   "homepage": "https://github.com/jaydpather/FunctionalCrudForms#readme",
   "devDependencies": {
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "@babel/core": "^7.8.3",
-    "fable-compiler": "^2.4.12",
-    "fable-loader": "^2.1.8"
+    "@babel/core": "^7.8.7",
+    "fable-compiler": "^2.4.18",
+    "fable-loader": "^2.1.8",
+    "fable-core": "^0.7.30",
+    "fable-powerpack": "0.0.20",
+    "fable-react": "^0.8.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
