@@ -9,7 +9,7 @@
             "type": "chrome",
             "request": "launch",
             //"preLaunchTask": "build-fable", //todo: use ProblemMatcher property so that VSCode can tell when the build-fable task is done
-            "url": "http://localhost:3000",
+            "url": "http://localhost:3000/employee/create",
             "webRoot": "C:\\Users\\jaydp\\Documents\\Github\\FunctionalCrudForms\\Fable",
             "sourceMaps": true,
             "sourceMapPathOverrides": {

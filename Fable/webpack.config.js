@@ -13,7 +13,7 @@ module.exports = [
         devtool: "source-map",
         entry: path.join(__dirname, "./UI/UI.fsproj"),
         output: {
-            path: path.join(__dirname, "./Fable"),
+            path: path.join(__dirname, "./public"),
             filename: "fable-bundle.js",
         },
         devServer: {
