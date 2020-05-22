@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Layout from '../../components/MyLayout';
+import { ContactInfoComponent } from '../../components/fable-components';
 const axios = require('axios');
 
 export default class extends Component {
@@ -61,6 +62,10 @@ export default class extends Component {
             </div>
             
             <br />
+            <hr />
+            <br />
+
+            <ContactInfoComponent />
 
         </div>
       </Layout>
