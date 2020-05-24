@@ -52,7 +52,6 @@ let submitForm =
         let responseText = response.text()
         Browser.console.log responseText
     } |> ignore
-    0
 
 //alert("hello");
 printfn "page loaded"
