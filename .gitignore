@@ -9,8 +9,12 @@ node/components/fable-components.js
 
 Fable/UI/bin/
 Fable/UI/obj/
-Fable/public/
+Fable/Components/bin/
 Fable/Components/obj/
+Fable/Common/bin/
+Fable/Common/obj/
+Fable/public/
+
 
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/bin/
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/obj/

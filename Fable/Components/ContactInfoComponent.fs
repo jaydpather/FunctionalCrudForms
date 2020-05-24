@@ -9,16 +9,7 @@ open Fable.React
 open Fable.React.Props
 open Browser
 open Browser.Types
-
-
-
-type ContactInfoProps = {
-    Name : string
-}
-
-type ContactInfoState = {
-    Name : string
-}
+open Model
 
 type ContactInfoComponent(initialProps) = 
     inherit Component<ContactInfoProps, ContactInfoState>(initialProps)
