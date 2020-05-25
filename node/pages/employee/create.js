@@ -8,7 +8,12 @@ export default class extends Component {
     //todo: get whole form as one JSON object
     var name = document.getElementById("txtName").value
     var data = { Name:name }
-    axios.post("http://localhost:5000/employee/create", JSON.stringify(data))
+    this.postToServer("http://localhost:5000/employee/create", JSON.stringify(data));
+    
+  }
+
+  postToServer(url, strData){
+    axios.post(url, strData)
       .then(function (response) {
         alert(response.data.Status);
       })
