@@ -38,17 +38,22 @@ let getInputElementById (id:string):Browser.Types.HTMLInputElement =
     getElementByIdAbstract window id
 
 
-// let someFunc e = 
-//     alert("returned value")
 
-//let btnMain = getButtonElementById "btnMain" 
-//btnMain.onclick <- someFunc
 
-//let submitForm = 
+
+let submitForm () = 
+    mylib.triggerAlert("hello" + mylib.someString)
     // let txtName = getInputElementById("txtName")
     // let postData = { Name = txtName.value }
     //postToServer "abc" "def" |> ignore
 
+let btnSave_Click e = 
+    submitForm ()
+
+let btnSave = getButtonElementById "btnSave" 
+btnSave.onclick <- btnSave_Click
+
+
 //alert("hello");
-mylib.triggerAlert("hello" + mylib.someString)
+
 printfn "page loaded"

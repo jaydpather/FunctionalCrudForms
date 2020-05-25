@@ -4,7 +4,7 @@ import { ContactInfoComponent } from '../../components/fable-components';
 const axios = require('axios');
 
 export default class extends Component {
-  submitForm() {
+  submitFormJS() {
     //todo: get whole form as one JSON object
     var name = document.getElementById("txtName").value
     var data = { Name:name }
@@ -56,7 +56,7 @@ export default class extends Component {
             Name: <input type="text" id="txtName" />
             <br />
             <br />
-            <button type="button" onClick={this.submitForm}>Save</button>
+            <button id="btnSave" type="button">Save</button>
             <br />
             <br />
             <div id="divSuccessMsg" style={successMsgStyle}>
