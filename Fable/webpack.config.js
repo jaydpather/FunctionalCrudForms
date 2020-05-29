@@ -13,11 +13,11 @@ module.exports = [
         devtool: "source-map",
         entry: path.join(__dirname, "./UI/UI.fsproj"),
         output: {
-            path: path.join(__dirname, "./public"),
+            path: path.join(__dirname, "../node/fable-include"),
             filename: "fable-bundle.js",
         },
         devServer: {
-            contentBase: "public",
+            contentBase: "../node/fable-include",
             port: 8080,
         },
         module: {

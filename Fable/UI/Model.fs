@@ -1,7 +1,9 @@
 module Model
+open Browser.Types
 
 type ContactInfoProps = {
-    Name : string
+    Name : string;
+    OnClick: MouseEvent -> unit
 }
 
 type ContactInfoState = {

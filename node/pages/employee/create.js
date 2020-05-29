@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Layout from '../../components/MyLayout';
-import { ContactInfoComponent } from '../../components/fable-components';
+import { btnSave_Click } from '../../fable-include/fable-bundle';
+import { ContactInfoPageComponent, ContactInfoComponent } from '../../components/fable-components';
 const axios = require('axios');
 
 export default class extends Component {
@@ -10,6 +11,10 @@ export default class extends Component {
     var data = { Name:name }
     this.postToServer("http://localhost:5000/employee/create", JSON.stringify(data));
     
+  }
+
+  btnSave_ClickWrapper(){
+    btnSave_Click({});
   }
 
   postToServer(url, strData){
@@ -56,7 +61,7 @@ export default class extends Component {
             Name: <input type="text" id="txtName" />
             <br />
             <br />
-            <button id="btnSave" type="button">Save</button>
+            <button id="btnSaveJS" type="button" onClick={this.submitFormJS}>Save</button>
             <br />
             <br />
             <div id="divSuccessMsg" style={successMsgStyle}>
@@ -70,10 +75,12 @@ export default class extends Component {
             <hr />
             <br />
 
-            <ContactInfoComponent />
+            <ContactInfoPageComponent />
+            
 
         </div>
       </Layout>
     )
   }
 }
+//<ContactInfoComponent OnClick={this.btnSave_ClickWrapper} />

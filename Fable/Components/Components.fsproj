@@ -3,12 +3,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.fsproj">
-      <Name>Common.fsproj</Name>
+    <ProjectReference Include="..\UI\UI.fsproj">
+      <Name>UI.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContactInfoComponent.fs" />
+    <Compile Include="ContactInfoPageComponent.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Core" Version="3.1.5" />

@@ -50,8 +50,8 @@ let submitForm () =
 let btnSave_Click e = 
     submitForm ()
 
-let btnSave = getButtonElementById "btnSave" 
-btnSave.onclick <- btnSave_Click
+// let btnSave = getButtonElementById "btnSave" 
+// btnSave.onclick <- btnSave_Click
 
 
 //alert("hello");
