@@ -6,10 +6,12 @@ const axios = require('axios');
 
 export default class extends Component {
   submitFormJS() {
+    eval("submitForm();");
+
     //todo: get whole form as one JSON object
-    var name = document.getElementById("txtName").value
-    var data = { Name:name }
-    this.postToServer("http://localhost:5000/employee/create", JSON.stringify(data));
+    // var name = document.getElementById("txtName").value
+    // var data = { Name:name }
+    // this.postToServer("http://localhost:5000/employee/create", JSON.stringify(data));
     
   }
 
@@ -75,6 +77,8 @@ export default class extends Component {
             <hr />
             <br />
 
+            <ContactInfoPageComponent />
+            <br/>
             <ContactInfoPageComponent />
             
 
