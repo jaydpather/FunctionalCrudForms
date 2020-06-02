@@ -25,6 +25,9 @@ let mylib: IAlert = jsNative
 [<Emit("alert('$0')")>]
 let alert msg = jsNative
 
+// [<Emit("alert(JSON.stringify('$0'))")>]
+// let alertJSON obj = jsNative
+
 // [<Emit("postToServer(\"$0\", \"$1\")")>]
 // let postToServer (url:string) (strData:string) : unit = jsNative
 
@@ -47,8 +50,14 @@ let submitForm () =
     // let postData = { Name = txtName.value }
     //postToServer "abc" "def" |> ignore
 
-let btnSave_Click e = 
+let btnSave_Click (state:unit -> ContactInfoState) (_:MouseEvent) = 
+    
+    //let target:obj = e.target
+    //mylib.triggerAlert(Thoth.Json.Encode.toString 0 e)
+    let msg:string = state().ToString ()
+    printfn "state: %s" msg
     submitForm ()
+    //alert(msg)
 
 // let btnSave = getButtonElementById "btnSave" 
 // btnSave.onclick <- btnSave_Click
