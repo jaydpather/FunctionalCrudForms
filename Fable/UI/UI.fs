@@ -54,8 +54,8 @@ let btnSave_Click (state:unit -> ContactInfoState) (_:MouseEvent) =
     
     //let target:obj = e.target
     //mylib.triggerAlert(Thoth.Json.Encode.toString 0 e)
-    let msg:string = state().ToString ()
-    printfn "state: %s" msg
+    let msg:string = state().Name
+    printfn "state().Name: %s" msg
     submitForm ()
     //alert(msg)
 

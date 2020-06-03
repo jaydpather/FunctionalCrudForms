@@ -14,8 +14,14 @@ open Model
 type ContactInfoComponent(initialProps) = 
     inherit Component<ContactInfoProps, ContactInfoState>(initialProps)
 
-    let txtName_OnChange (e:Event) =
+    member this.txtName_OnChange (e:Event) =
         printfn "txtName_OnChange: %s" (e.Value)
+        let newState = {
+            Name = e.Value;
+        }
+        this.setState(fun state props -> 
+            newState
+        )
 
     // member this.btnSave_Click(_:MouseEvent) = 
     //     UI.btnSave_Click this.state
@@ -26,7 +32,7 @@ type ContactInfoComponent(initialProps) =
             input [ 
                 Type "input" 
                 Id "txtName" 
-                OnChange txtName_OnChange
+                OnChange this.txtName_OnChange
             ]
             br []
             button [ 
