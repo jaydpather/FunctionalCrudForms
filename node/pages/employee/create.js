@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Layout from '../../components/MyLayout';
 import { btnSave_Click } from '../../fable-include/fable-bundle';
 import { ContactInfoPageComponent, ContactInfoComponent } from '../../components/fable-components';
-const axios = require('axios');
+//const axios = require('axios');
 
 export default class extends Component {
   submitFormJS() {
@@ -20,13 +20,13 @@ export default class extends Component {
   }
 
   postToServer(url, strData){
-    axios.post(url, strData)
-      .then(function (response) {
-        alert(response.data.Status);
-      })
-      .catch(function(error){
-        alert(error);
-      })
+    // axios.post(url, strData)
+    //   .then(function (response) {
+    //     alert(response.data.Status);
+    //   })
+    //   .catch(function(error){
+    //     alert(error);
+    //   })
   }
 
   render () {

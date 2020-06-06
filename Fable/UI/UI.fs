@@ -14,9 +14,13 @@ open Browser.Types
 //open Fable.Core.Util
 open Model
 open Fable.PowerPack.PromiseImpl
+open Fable.Import.Axios
+open Fable.Import.Axios.Globals
+//open Fable.Axios
 
 type IAlert =
     abstract triggerAlert : message:string -> unit
+    abstract postToServer : url:string -> jsonObj:obj -> unit
     abstract someString: string
 
 [<ImportAll("./js/alert.js")>]
@@ -50,14 +54,43 @@ let submitForm () =
     // let postData = { Name = txtName.value }
     //postToServer "abc" "def" |> ignore
 
-let btnSave_Click (state:unit -> ContactInfoState) (_:MouseEvent) = 
-    
+
+type ResultType = Result<string option, exn>
+
+let private parseResponse (response : AxiosXHR<string>) : ResultType =
+    Ok (Some "str")
+
+let handleError error : ResultType =
+    Ok (Some "err")
+
+let private catchAxiosError (error : AxiosError<_, _>) =
+    match error with
+    | ErrorResponse r ->
+        match r.response.status with
+        | 403
+        | 404 ->
+            Ok None
+        | _ ->
+            handleError error
+    | _ ->
+        handleError error
+
+let fetchWithAxios url =
+    axios.get(url)
+    |> Promise.map parseResponse
+    |> Promise.catchAxios catchAxiosError
+
+let btnSave_Click (getState:unit -> ContactInfoState) (_:MouseEvent) = 
     //let target:obj = e.target
     //mylib.triggerAlert(Thoth.Json.Encode.toString 0 e)
-    let msg:string = state().Name
-    printfn "state().Name: %s" msg
+    //let state = getState ()
+    
+    //printfn "state().Name: %s" state.Name
+    //mylib.postToServer "http://localhost:5000/employee/create" state
+
     submitForm ()
     //alert(msg)
+    //()
 
 // let btnSave = getButtonElementById "btnSave" 
 // btnSave.onclick <- btnSave_Click
