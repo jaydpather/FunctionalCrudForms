@@ -3,17 +3,42 @@ import React, { Component } from 'react'
 const axios = require('axios');
 
 export default class extends Component {
+    state = { 
+        name:"", 
+        isSuccess: false,
+        isError: false
+    };
+    self = this;
+
+    handleSubmit = async(event) => {
+        this.setState(
+            {
+                name: this.state.name,
+                isSuccess: false,
+                isError: true
+            }
+        );
+    };
+    
     //todo: remove this function from component
-    submitForm() {
+    submitForm = async(event) => {
     //todo: maintain state as textbox value changes
-    var name = document.getElementById("txtName").value
-    var data = { Name:name }
-    axios.post("http://localhost:5000/employee/create", JSON.stringify(data))
+    //var name = document.getElementById("txtName").value
+    var data = { Name:this.state.name }
+    var self = this;
+    axios.post("http://localhost:6000/employee/create", JSON.stringify(data))
         .then(function (response) {
-        alert(response.data.Status);
+            alert(response.data.Status);
         })
         .catch(function(error){
-        alert(error);
+            alert(error);
+            self.setState(
+                {
+                    name: self.state.name,
+                    isSuccess: false,
+                    isError: true
+                }
+            );
         })
     }
 
@@ -30,7 +55,6 @@ export default class extends Component {
             "background-color": "#DFD",
             "padding": "3px",
             "width": "20%",
-            "display": "none",
           };
       
         const failureMsgStyle = {
@@ -38,25 +62,42 @@ export default class extends Component {
             "background-color": "#FDD",
             "padding": "3px",
             "width": "40%",
-            "display": "none",
           };
         return(
             <div style={formStyle}>
                 <h1>
                     Create Employee
                 </h1>
-                Name: <input type="text" id="txtName" />
+                Name: 
+                <input type="text" id="txtName" value={this.state.name} 
+                    onChange =  { e => this.setState({ 
+                        name:e.target.value, 
+                        isSuccess: this.state.isSuccess,
+                        isError: this.state.isError 
+                    }) } 
+                />
                 <br />
                 <br />
                 <button type="button" onClick={this.submitForm}>Save</button>
                 <br />
                 <br />
-                <div id="divSuccessMsg" style={successMsgStyle}>
-                    Saved successfully.
-                </div>
-                <div id="divFailureMsg" style={failureMsgStyle}>
-                    Unable to save: unknown error occurred.
-                </div>
+                {
+                    this.state.isSuccess ?
+                        <div id="divSuccessMsg" style={successMsgStyle}>
+                            Saved successfully.
+                        </div>
+                    :
+                        null
+                }
+
+                {
+                    this.state.isError?
+                        <div id="divFailureMsg" style={failureMsgStyle}>
+                            Unable to save: unknown error occurred.
+                        </div>
+                    :
+                        null
+                }
             </div>
         );
     }
