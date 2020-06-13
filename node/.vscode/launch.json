@@ -21,14 +21,25 @@
             "type": "firefox",
             "request": "launch",
             "name": "Client-Firefox",
-            "url": "http://localhost:3000",
+            "url": "http://localhost:3000/employee/create",
             "webRoot": "${workspaceFolder}"
-        }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Client-Chrome",
+            "url": "http://localhost:3000/employee/create",
+            "webRoot": "${workspaceFolder}"
+        },
     ],
     "compounds": [
         {
             "name": "Server and Client-Firefox",
             "configurations": ["Server", "Client-Firefox"]
+        },
+        {
+            "name": "Server and Client-Chrome",
+            "configurations": ["Server", "Client-Chrome"]
         }
     ]
 }

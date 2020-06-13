@@ -15,8 +15,7 @@ let private getElementByIdAbstract (window:Window) id =
 
 let getButtonElementById (id:string):Browser.Types.HTMLButtonElement = 
     getElementByIdAbstract window id
-
-
+ 
 let someFunc e = 
     alert("returned value");
 
