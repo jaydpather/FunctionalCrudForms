@@ -29,16 +29,20 @@ export default class extends Component {
     axios.post("http://localhost:6000/employee/create", JSON.stringify(data))
         .then(function (response) {
             alert(response.data.Status);
+            alert(JSON.stringify(response.data));
+            self.setState({
+                name: self.state.name,
+                isSuccess: true,
+                isError: false
+            });
         })
         .catch(function(error){
             alert(error);
-            self.setState(
-                {
-                    name: self.state.name,
-                    isSuccess: false,
-                    isError: true
-                }
-            );
+            self.setState({
+                name: self.state.name,
+                isSuccess: false,
+                isError: true   
+            });
         })
     }
 
