@@ -17,6 +17,7 @@ open Fable.PowerPack.PromiseImpl
 open Fable.Import.Axios
 open Fable.Import.Axios.Globals
 //open Fable.Axios
+open System
 
 type IAlert =
     abstract triggerAlert : message:string -> unit
@@ -43,6 +44,9 @@ let getButtonElementById (id:string):Browser.Types.HTMLButtonElement =
  
 let someFunc e = 
     alert("returned value");
+
+let validateFirstName firstName = 
+    firstName <> String.Empty
 
 //alert("hello");
 

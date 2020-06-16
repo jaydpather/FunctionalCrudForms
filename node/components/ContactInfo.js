@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import { validateFirstName } from '../fable-include/UI'
 const axios = require('axios');
 
 export default class extends Component {
@@ -9,7 +9,7 @@ export default class extends Component {
         isError: false
     };
     self = this;
-
+    
     handleSubmit = async(event) => {
         this.setState(
             {
@@ -19,12 +19,18 @@ export default class extends Component {
             }
         );
     };
-    
+
     //todo: remove this function from component
     submitForm = async(event) => {
+        //alert(JSON.stringify(ui));
+
         var data = { Name:this.state.name }
         var self = this;
-        axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
+
+        let isClientSide = (typeof window !== 'undefined');
+
+        if(isClientSide && validateFirstName(this.state.name)){
+            axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
                 //alert(response.data);
                 alert(JSON.stringify(response.data));
@@ -42,6 +48,10 @@ export default class extends Component {
                     isError: true   
                 });
             })
+        }
+        else{
+            alert("validation failed");
+        }
     }
 
     render () {
