@@ -9,10 +9,10 @@ node/components/fable-components.js
 
 Fable/UI/bin/
 Fable/UI/obj/
-Fable/Components/bin/
-Fable/Components/obj/
-Fable/Common/bin/
-Fable/Common/obj/
+
+Fable/Common/bin
+Fable/Common/obj
+
 Fable/public/
 
 

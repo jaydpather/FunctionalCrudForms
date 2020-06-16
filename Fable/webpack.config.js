@@ -17,8 +17,8 @@ module.exports = [
             filename: "fable-bundle.js",
         },
         devServer: {
-            contentBase: "../node/fable-include",
-            port: 8080,
+            contentBase: "public",
+            port: 8081,
         },
         module: {
             rules: [{
@@ -27,20 +27,4 @@ module.exports = [
             }]
         }
     },
-    {
-        mode: "development",
-        //devtool: "source-map",
-        entry: path.join(__dirname, "./Components/Components.fsproj"),
-        output: {
-            path: path.join(__dirname, "../node/components"),
-            filename: "fable-components.js",
-            libraryTarget: "amd"
-        },
-        module: {
-            rules: [{
-                test: /\.fs(x|proj)?$/,
-                use: "fable-loader"
-            }]
-        }
-    }
 ]
