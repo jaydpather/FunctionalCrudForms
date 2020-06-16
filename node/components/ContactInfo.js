@@ -22,28 +22,26 @@ export default class extends Component {
     
     //todo: remove this function from component
     submitForm = async(event) => {
-    //todo: maintain state as textbox value changes
-    //var name = document.getElementById("txtName").value
-    var data = { Name:this.state.name }
-    var self = this;
-    axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
-        .then(function (response) {
-            //alert(response.data);
-            alert(JSON.stringify(response.data));
-            self.setState({
-                name: self.state.name,
-                isSuccess: true,
-                isError: false
-            });
-        })
-        .catch(function(error){
-            alert(error);
-            self.setState({
-                name: self.state.name,
-                isSuccess: false,
-                isError: true   
-            });
-        })
+        var data = { Name:this.state.name }
+        var self = this;
+        axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
+            .then(function (response) {
+                //alert(response.data);
+                alert(JSON.stringify(response.data));
+                self.setState({
+                    name: self.state.name,
+                    isSuccess: true,
+                    isError: false
+                });
+            })
+            .catch(function(error){
+                alert(error);
+                self.setState({
+                    name: self.state.name,
+                    isSuccess: false,
+                    isError: true   
+                });
+            })
     }
 
     render () {
