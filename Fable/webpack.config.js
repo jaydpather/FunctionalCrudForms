@@ -17,8 +17,8 @@ module.exports = [
             filename: "fable-bundle.js",
         },
         devServer: {
-            contentBase: "../node/fable-include",
-            port: 8080,
+            contentBase: "public",
+            port: 8081,
         },
         module: {
             rules: [{
@@ -27,14 +27,4 @@ module.exports = [
             }]
         }
     },
-    devServer: {
-        contentBase: "public",
-        port: 8081,
-    },
-    module: {
-        rules: [{
-            test: /\.fs(x|proj)?$/,
-            use: "fable-loader"
-        }]
-    }
 ]
