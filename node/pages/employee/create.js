@@ -4,10 +4,6 @@ import ContactInfo from '../../components/ContactInfo';
 
 export default class extends Component {
   render () {
-    
-
-    
-
     //todo: consistent tab width
     return (
       <Layout>
@@ -16,3 +12,4 @@ export default class extends Component {
     )
   }
 }
+//<ContactInfoComponent OnClick={this.btnSave_ClickWrapper} />
