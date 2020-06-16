@@ -51,6 +51,7 @@ let createClient (requestJsonString:string) =
     }
     rpcInfo
 
+//use this function to return a success value without microservices running
 let create_dummy (httpContext:HttpContext) = 
     httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
     httpContext.Response.WriteAsync("{Status:'Success'}")
