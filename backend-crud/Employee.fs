@@ -57,6 +57,7 @@ let create_dummy (httpContext:HttpContext) =
     httpContext.Response.WriteAsync("{Status:'Success'}")
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
+//todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 let create (httpContext:HttpContext) =
     use reader = new StreamReader(httpContext.Request.Body)
     let bodyTask = reader.ReadToEndAsync()

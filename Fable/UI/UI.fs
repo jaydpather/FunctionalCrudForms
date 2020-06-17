@@ -45,8 +45,14 @@ let getButtonElementById (id:string):Browser.Types.HTMLButtonElement =
 let someFunc e = 
     alert("returned value");
 
+type ValidationResults = 
+    Success = 0 
+    | FirstNameBlank = 1
+
 let validateFirstName firstName = 
-    firstName <> String.Empty
+    match String.IsNullOrWhiteSpace(firstName) with 
+        | true -> ValidationResults.FirstNameBlank
+        | false -> ValidationResults.Success
 
 //alert("hello");
 
