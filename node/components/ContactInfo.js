@@ -6,7 +6,7 @@ export default class extends Component {
     validationEnum = {
         Success: 0,
         FirstNameBlank: 1,
-        Loading: 32,
+        Saving: 32,
         UnknownError: 64,
         New: 128
     };
@@ -27,7 +27,7 @@ export default class extends Component {
         if(this.validationEnum.Success == validateFirstName(this.state.name)){
             self.setState({
                 name: self.state.name,
-                validationState: self.validationEnum.Loading
+                validationState: self.validationEnum.Saving
             });
             axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
@@ -76,7 +76,7 @@ export default class extends Component {
             "width": "40%",
           };
 
-        const loadingMsgStyle = {
+        const savingMsgStyle = {
         "color": "#001375",
         "background-color": "#DAEDFF",
         "padding": "3px",
@@ -102,9 +102,9 @@ export default class extends Component {
                 <br />
                 <br />
                 {
-                    (this.state.validationState == this.validationEnum.Loading) ?
-                        <div id="divSuccessMsg" style={loadingMsgStyle}>
-                            Loading...
+                    (this.state.validationState == this.validationEnum.Saving) ?
+                        <div id="divSuccessMsg" style={savingMsgStyle}>
+                            Saving...
                         </div>
                     :
                         null
