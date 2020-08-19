@@ -6,6 +6,7 @@ export default class extends Component {
     validationEnum = {
         Success: 0,
         FirstNameBlank: 1,
+        Loading: 32,
         UnknownError: 64,
         New: 128
     };
@@ -24,6 +25,10 @@ export default class extends Component {
         var self = this;
 
         if(this.validationEnum.Success == validateFirstName(this.state.name)){
+            self.setState({
+                name: self.state.name,
+                validationState: self.validationEnum.Loading
+            });
             axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
                 //alert(response.data);
@@ -70,6 +75,13 @@ export default class extends Component {
             "padding": "3px",
             "width": "40%",
           };
+
+        const loadingMsgStyle = {
+        "color": "#001375",
+        "background-color": "#DAEDFF",
+        "padding": "3px",
+        "width": "40%",
+        };
         
         return(
             <div style={formStyle}>
@@ -89,6 +101,14 @@ export default class extends Component {
                 <button type="button" onClick={this.submitForm}>Save</button>
                 <br />
                 <br />
+                {
+                    (this.state.validationState == this.validationEnum.Loading) ?
+                        <div id="divSuccessMsg" style={loadingMsgStyle}>
+                            Loading...
+                        </div>
+                    :
+                        null
+                }
                 {
                     (this.state.validationState == this.validationEnum.Success) ?
                         <div id="divSuccessMsg" style={successMsgStyle}>

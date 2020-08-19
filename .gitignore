@@ -6,12 +6,15 @@ node_modules/
 node/server/fableImports
 #must be re-compiled from fable project each time
 node/components/fable-components.js 
+node/fable-include/
 
 Fable/UI/bin/
 Fable/UI/obj/
 
 Fable/Common/bin
 Fable/Common/obj
+
+Fable/Components/obj
 
 Fable/public/
 
