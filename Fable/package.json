@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --watch",
     "build": "webpack",
-    "build-split": "fable-splitter UI -o ../node/fable-include --commonjs"
+    "build-split": "fable-splitter UI -o ../node/fable-include --commonjs && fable-splitter Shared -o ../node/fable-include"
   },
   "repository": {
     "type": "git",

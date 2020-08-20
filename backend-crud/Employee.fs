@@ -36,6 +36,7 @@ let createClient (requestJsonString:string) =
     props.ReplyTo <- replyQueueName
     consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
     
+    let validationResult = Validation.validateFirstName "abc"
     let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
 
     channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)

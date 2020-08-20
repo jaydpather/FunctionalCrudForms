@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { validateFirstName, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/UI'
+import { validateFirstName, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
