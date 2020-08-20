@@ -1,19 +1,11 @@
 import React, { Component } from 'react'
-import { validateFirstName } from '../fable-include/UI'
+import { validateFirstName, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/UI'
 const axios = require('axios');
 
 export default class extends Component {
-    validationEnum = {
-        Success: 0,
-        FirstNameBlank: 1,
-        Saving: 32,
-        UnknownError: 64,
-        New: 128
-    };
-
     state = { 
         name:"", 
-        validationState: this.validationEnum.New
+        validationState: ValidationResults$$$get_New()
     };
 
     self = this;
@@ -24,10 +16,10 @@ export default class extends Component {
         var data = { Name:this.state.name }
         var self = this;
 
-        if(this.validationEnum.Success == validateFirstName(this.state.name)){
+        if(ValidationResults$$$get_Success() == validateFirstName(this.state.name)){
             self.setState({
                 name: self.state.name,
-                validationState: self.validationEnum.Saving
+                validationState: ValidationResults$$$get_Saving() //
             });
             axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
@@ -35,21 +27,21 @@ export default class extends Component {
                 //alert(JSON.stringify(response.data));
                 self.setState({
                     name: self.state.name,
-                    validationState: self.validationEnum.Success
+                    validationState: ValidationResults$$$get_Success()
                 });
             })
             .catch(function(error){
                 //alert("error:" + error);
                 self.setState({
                     name: self.state.name,
-                    validationState: self.validationEnum.UnknownError
+                    validationState: ValidationResults$$$get_UnknownError()
                 });
             })
         }
         else{
             self.setState({
                 name: self.state.name,
-                validationState: self.validationEnum.FirstNameBlank
+                validationState: ValidationResults$$$get_FirstNameBlank()
             });
         }
     }
@@ -102,7 +94,7 @@ export default class extends Component {
                 <br />
                 <br />
                 {
-                    (this.state.validationState == this.validationEnum.Saving) ?
+                    (this.state.validationState == ValidationResults$$$get_Saving()) ?
                         <div id="divSuccessMsg" style={savingMsgStyle}>
                             Saving...
                         </div>
@@ -110,7 +102,7 @@ export default class extends Component {
                         null
                 }
                 {
-                    (this.state.validationState == this.validationEnum.Success) ?
+                    (this.state.validationState == ValidationResults$$$get_Success()) ?
                         <div id="divSuccessMsg" style={successMsgStyle}>
                             Saved successfully.
                         </div>
@@ -118,7 +110,7 @@ export default class extends Component {
                         null
                 }
                 {
-                    (0 != (this.state.validationState & this.validationEnum.FirstNameBlank)) ?
+                    (0 != (this.state.validationState & ValidationResults$$$get_FirstNameBlank())) ?
                         <div id="divFailureMsg" style={failureMsgStyle}>
                             First name cannot be blank.
                         </div>
@@ -126,7 +118,7 @@ export default class extends Component {
                         null
                 }
                 {
-                    (0 != (this.state.validationState & this.validationEnum.UnknownError)) ?
+                    (0 != (this.state.validationState & ValidationResults$$$get_UnknownError())) ?
                         <div id="divFailureMsg" style={failureMsgStyle}>
                             Unable to save: unknown error occurred.
                         </div>
