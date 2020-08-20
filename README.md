@@ -17,8 +17,8 @@ This app consists of several projects:
     * Fable is a tool that transpiles F# into JS
     * these JS files can be  referenced by the front end
     * to build:
-      * npm run-script build
-      * transpiles to a JS bundle file in the node project
+      * npm run-script build-split
+      * transpiles F# code into 1 JS file per project
     * to start:
       * npm run-script start
       * serves content from localhost:8080
