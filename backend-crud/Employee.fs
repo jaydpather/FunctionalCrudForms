@@ -26,40 +26,52 @@ let onMessageReceived (respQueue:BlockingCollection<string>) correlationId (ea:B
     if(ea.BasicProperties.CorrelationId = correlationId) then
         respQueue.Add(response)
 
-let createClient (requestJsonString:string) = 
+let createRpcInfoObject () = 
     let factory = ConnectionFactory()
-    factory.HostName <- "localhost" //todo: does F# have object initializer?
+    factory.HostName <- "localhost" //todo: does F# have object initializer? //todo: get host name from config file
     let respQueue = new BlockingCollection<string>()
     let connection = factory.CreateConnection()
     let channel = connection.CreateModel()
-    let replyQueueName = channel.QueueDeclare().QueueName
     let consumer = EventingBasicConsumer(channel)
     let props = channel.CreateBasicProperties();
     props.CorrelationId <- Guid.NewGuid().ToString()
-    props.ReplyTo <- replyQueueName
+    props.ReplyTo <- channel.QueueDeclare().QueueName
     consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
     
-    let jsonSerializer = DataContractJsonSerializer(typedefof<Employee>)
-    use stream:MemoryStream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes requestJsonString)
-    let employee = jsonSerializer.ReadObject(stream) :?> Employee
-
-    let validationResult = Validation.validateFirstName employee.Name
-    let rpcInfo = {
+    {
         connection = connection;
         channel = channel;
         consumer = consumer;
         respQueue = respQueue;
         props = props;
     }
+
+let deserializeEmployeeFromJson (jsonString:string) = 
+    let jsonSerializer = DataContractJsonSerializer(typedefof<Employee>)
+    use stream:MemoryStream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes jsonString)
+    let employee = jsonSerializer.ReadObject(stream) :?> Employee
+    employee
+
+let publishToMsgQueue rpcInfo (jsonString:string) = 
+    let msgBytes = Encoding.UTF8.GetBytes(jsonString)
+    rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes) //todo: routing key from config file
+
+    rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.channel.QueueDeclare().QueueName, autoAck=true)
+
+let createClient (requestJsonString:string) = 
+    let employee = deserializeEmployeeFromJson requestJsonString
+    let validationResult = Validation.validateFirstName employee.Name
+    let rpcInfo = createRpcInfoObject ()
     
     match validationResult = ValidationResults.Success with 
         | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
-            let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
-            channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
+            publishToMsgQueue rpcInfo requestJsonString |> ignore
+            // let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
+            // rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes)
 
-            channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
+            // rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.channel.QueueDeclare().QueueName, autoAck=true) |> ignore
             
-        | false -> respQueue.Add("{Status:Failure}")
+        | false -> rpcInfo.respQueue.Add("{Status:Failure}")
 
     rpcInfo 
 
