@@ -10,6 +10,7 @@ open System.Collections.Generic
 open System.IO
 open Microsoft.FSharp.Control
 open Model
+open Validation
 open System.Runtime.Serialization.Json
 
 type RPCInfo = {
@@ -50,14 +51,15 @@ let createClient (requestJsonString:string) =
         respQueue = respQueue;
         props = props;
     }
-    match validationResult with 
-        | 0 ->
+    
+    match validationResult = ValidationResults.Success with 
+        | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
             let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
             channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
 
             channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
             
-        | _ -> respQueue.Add("{Status:Failure}")
+        | false -> respQueue.Add("{Status:Failure}")
 
     rpcInfo 
 
