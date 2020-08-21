@@ -9,6 +9,8 @@ open System
 open System.Collections.Generic
 open System.IO
 open Microsoft.FSharp.Control
+open Model
+open System.Runtime.Serialization.Json
 
 type RPCInfo = {
     connection : IConnection;
@@ -36,13 +38,11 @@ let createClient (requestJsonString:string) =
     props.ReplyTo <- replyQueueName
     consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
     
-    let validationResult = Validation.validateFirstName "abc"
-    let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
+    let jsonSerializer = DataContractJsonSerializer(typedefof<Employee>)
+    use stream:MemoryStream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes requestJsonString)
+    let employee = jsonSerializer.ReadObject(stream) :?> Employee
 
-    channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
-
-    channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
-
+    let validationResult = Validation.validateFirstName employee.Name
     let rpcInfo = {
         connection = connection;
         channel = channel;
@@ -50,7 +50,16 @@ let createClient (requestJsonString:string) =
         respQueue = respQueue;
         props = props;
     }
-    rpcInfo
+    match validationResult with 
+        | 0 ->
+            let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
+            channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
+
+            channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
+            
+        | _ -> respQueue.Add("{Status:Failure}")
+
+    rpcInfo 
 
 //use this function to return a success value without microservices running
 let create_dummy (httpContext:HttpContext) = 

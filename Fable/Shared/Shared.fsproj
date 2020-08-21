@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Validation.fs" />
+    <Compile Include="Model.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Axios" Version="0.3.0" />
