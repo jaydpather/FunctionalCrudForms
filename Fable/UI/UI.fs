@@ -12,7 +12,6 @@ open Thoth.Json
 open Browser.Dom
 open Browser.Types
 //open Fable.Core.Util
-open Model
 open Fable.PowerPack.PromiseImpl
 open Fable.Import.Axios
 open Fable.Import.Axios.Globals
