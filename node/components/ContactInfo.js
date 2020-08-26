@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import { Employee, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank,
         ValidationResults$$$get_LastNameBlank } from '../fable-include/Model'
 
-import { validateFirstName, validateEmployee } from '../fable-include/Validation'
+import { validateEmployee } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
     state = { 
-        name: "", 
+        firstName: "", 
         lastName: "",
         validationState: ValidationResults$$$get_New()
     };
@@ -17,13 +17,13 @@ export default class extends Component {
     //todo: remove this function from component
     submitForm = async(event) => {
         //alert(JSON.stringify(ui));
-        var employee = { Name: this.state.name, LastName: this.state.lastName };
+        var employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
         var self = this;
         var opResult = validateEmployee(employee)
         if(ValidationResults$$$get_Success() == opResult.ValidationResult){
         //if(true){ //temp: allow posting of blank names, to test server-side validation
             self.setState({
-                name: self.state.name,
+                firstName: self.state.firstName,
                 lastName: self.state.lastName,
                 validationState: ValidationResults$$$get_Saving() //
             });
@@ -31,7 +31,7 @@ export default class extends Component {
             .then(function (response) {
                 //alert(JSON.stringify(response.data));
                 self.setState({
-                    name: self.state.name,
+                    firstName: self.state.firstName,
                     lastName: self.state.lastName,
                     validationState: response.data.ValidationResult
                 });
@@ -39,7 +39,7 @@ export default class extends Component {
             .catch(function(error){
                 //alert("error:" + error);
                 self.setState({
-                    name: self.state.name,
+                    firstName: self.state.firstName,
                     lastName: self.state.lastName,
                     validationState: ValidationResults$$$get_UnknownError()
                 });
@@ -47,7 +47,7 @@ export default class extends Component {
         }
         else{
             self.setState({
-                name: self.state.name,
+                firstName: self.state.firstName,
                 lastName: self.state.lastName,
                 validationState: opResult.ValidationResult
             });
@@ -92,7 +92,7 @@ export default class extends Component {
                 <input type="text" id="txtName" value={this.state.name} 
                     //todo: move onChange handler to new method (too unreadable here)
                     onChange =  { e => this.setState({ 
-                        name:e.target.value, 
+                        firstName:e.target.value, 
                         lastName: this.state.lastName,
                         validationState: this.state.validationState
                     }) } 
@@ -102,7 +102,7 @@ export default class extends Component {
                 <input type="text" id="txtLastName" value={this.state.lastName} 
                     //todo: move onChange handler to new method (too unreadable here)
                     onChange =  { e => this.setState({ 
-                        name: this.state.name,
+                        firstName: this.state.name,
                         lastName: e.target.value, 
                         validationState: this.state.validationState
                     }) } 

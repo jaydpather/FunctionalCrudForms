@@ -1,7 +1,7 @@
 module Model
 
 type Employee = {
-    Name : string;
+    FirstName : string;
     LastName: string;
 }
 
