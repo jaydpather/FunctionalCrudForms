@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { validateFirstName, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/Validation'
+import { ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/Model'
+
+import { validateFirstName } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
@@ -15,19 +17,19 @@ export default class extends Component {
         //alert(JSON.stringify(ui));
         var data = { Name:this.state.name }
         var self = this;
-
-        if(ValidationResults$$$get_Success() == validateFirstName(this.state.name)){
+        var opResult = validateFirstName(this.state.name)
+        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        //if(true){ //temp: allow posting of blank names, to test server-side validation
             self.setState({
                 name: self.state.name,
                 validationState: ValidationResults$$$get_Saving() //
             });
             axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
-                //alert(response.data);
                 //alert(JSON.stringify(response.data));
                 self.setState({
                     name: self.state.name,
-                    validationState: ValidationResults$$$get_Success()
+                    validationState: response.data.ValidationResult
                 });
             })
             .catch(function(error){
