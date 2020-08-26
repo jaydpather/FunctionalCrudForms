@@ -12,7 +12,6 @@ open System.IO
 open Microsoft.FSharp.Control
 open Model
 open Validation
-open System.Runtime.Serialization.Json
 
 type RPCInfo = {
     connection : IConnection;
@@ -59,10 +58,10 @@ let publishToMsgQueue rpcInfo (jsonString:string) =
 
 let createClient (requestJsonString:string) = 
     let employee = deserializeEmployeeFromJson requestJsonString
-    let validationResult = Validation.validateFirstName employee.Name
+    let opResult = Validation.validateFirstName employee.Name
     let rpcInfo = createRpcInfoObject ()
     
-    match validationResult = ValidationResults.Success with 
+    match opResult.ValidationResult = ValidationResults.Success with 
         | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
             publishToMsgQueue rpcInfo requestJsonString |> ignore
             // let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
@@ -70,7 +69,9 @@ let createClient (requestJsonString:string) =
 
             // rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.channel.QueueDeclare().QueueName, autoAck=true) |> ignore
             
-        | false -> rpcInfo.respQueue.Add(String.Format("{{ValidationResult:{0}}}", validationResult)) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
+        | false -> 
+            let opResultStr = JsonConvert.SerializeObject(opResult)
+            rpcInfo.respQueue.Add(opResultStr) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
 
     rpcInfo 
 

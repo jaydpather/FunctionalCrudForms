@@ -9,14 +9,7 @@ open MongoDB.Driver
 open MongoDB.Bson
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
-
-type Employee = {
-    Name: string;
-}
-
-type OperationResult = {
-    ValidationResult: int;
-}
+open Model
 
 let convertToDictionary (record) =
     seq {
@@ -31,7 +24,7 @@ let writeToMongo record =
     let client = MongoClient()
     let database = client.GetDatabase("FunctionalCrudForms")
     let collection = database.GetCollection<BsonDocument>("Employee");
-    //let record = { Value = 456 }
+    
     let document = 
         record 
         |> convertToDictionary 
@@ -62,7 +55,7 @@ let startMsgQueueListener () =
         writeToMongo employeeObj //todo: try/catch, handle/log error
 
 
-        let operationResult = { ValidationResult = 0 } //todo: reference ValidationResults class from Model project of Fable folder. for now, assume 0 will always mean success
+        let operationResult = { ValidationResult = 0 }
         let responseString = JsonConvert.SerializeObject operationResult
         let responseBytes = Encoding.UTF8.GetBytes(responseString)
         let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
