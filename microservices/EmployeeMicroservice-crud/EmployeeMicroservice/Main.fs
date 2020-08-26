@@ -10,14 +10,9 @@ open MongoDB.Bson
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
 
-type SuccessStatus = {
-    Status: string;
-}
-
 type Employee = {
     Name: string;
 }
-
 
 type OperationResult = {
     ValidationResult: int;
@@ -64,15 +59,11 @@ let startMsgQueueListener () =
         let message = Encoding.UTF8.GetString(body)
 
         let employeeObj = JsonConvert.DeserializeObject<Employee>(message)
-        writeToMongo employeeObj
+        writeToMongo employeeObj //todo: try/catch, handle/log error
 
 
-        let status = { ValidationResult = 0 } //todo: reference ValidationResults class from Model project of Fable folder. for now, assume 0 will always mean success
-        let responseString = JsonConvert.SerializeObject status //"{\"data\":" + responseValue.ToString() + "}"
-        // let validationResult = 0
-        // let responseString = String.Format("{{ValidationResult:{0}}}", validationResult)
-        // let status = { Status = "Success" }
-        // let responseString = status.ToJson() //"{\"data\":" + responseValue.ToString() + "}"
+        let operationResult = { ValidationResult = 0 } //todo: reference ValidationResults class from Model project of Fable folder. for now, assume 0 will always mean success
+        let responseString = JsonConvert.SerializeObject operationResult
         let responseBytes = Encoding.UTF8.GetBytes(responseString)
         let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
         channel.BasicPublish(addr = addr, basicProperties = replyProps, body = responseBytes)

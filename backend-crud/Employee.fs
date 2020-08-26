@@ -48,11 +48,7 @@ let createRpcInfoObject () =
     }
 
 let deserializeEmployeeFromJson (jsonString:string) = 
-    // let jsonSerializer = DataContractJsonSerializer(typedefof<Employee>)
-    // use stream:MemoryStream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes jsonString)
-    // let employee = jsonSerializer.ReadObject(stream) :?> Employee
     let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
-
     employee
 
 let publishToMsgQueue rpcInfo (jsonString:string) = 
@@ -74,7 +70,7 @@ let createClient (requestJsonString:string) =
 
             // rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.channel.QueueDeclare().QueueName, autoAck=true) |> ignore
             
-        | false -> rpcInfo.respQueue.Add(String.Format("{{ValidationResult:{0}}}", validationResult))
+        | false -> rpcInfo.respQueue.Add(String.Format("{{ValidationResult:{0}}}", validationResult)) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
 
     rpcInfo 
 
