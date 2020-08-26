@@ -58,7 +58,7 @@ let publishToMsgQueue rpcInfo (jsonString:string) =
 
 let createClient (requestJsonString:string) = 
     let employee = deserializeEmployeeFromJson requestJsonString
-    let opResult = Validation.validateFirstName employee.Name
+    let opResult = Validation.validateEmployee employee
     let rpcInfo = createRpcInfoObject ()
     
     match opResult.ValidationResult = ValidationResults.Success with 
