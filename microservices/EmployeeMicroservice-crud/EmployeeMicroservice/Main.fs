@@ -9,14 +9,7 @@ open MongoDB.Driver
 open MongoDB.Bson
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
-
-type Employee = {
-    Name: string;
-}
-
-type SuccessStatus = {
-    Status: string;
-}
+open Model
 
 let convertToDictionary (record) =
     seq {
@@ -31,7 +24,7 @@ let writeToMongo record =
     let client = MongoClient()
     let database = client.GetDatabase("FunctionalCrudForms")
     let collection = database.GetCollection<BsonDocument>("Employee");
-    //let record = { Value = 456 }
+    
     let document = 
         record 
         |> convertToDictionary 
@@ -59,11 +52,11 @@ let startMsgQueueListener () =
         let message = Encoding.UTF8.GetString(body)
 
         let employeeObj = JsonConvert.DeserializeObject<Employee>(message)
-        writeToMongo employeeObj
+        writeToMongo employeeObj //todo: try/catch, handle/log error
 
 
-        let status = { Status = "Success" }
-        let responseString = status.ToJson() //"{\"data\":" + responseValue.ToString() + "}"
+        let operationResult = { ValidationResult = 0 }
+        let responseString = JsonConvert.SerializeObject operationResult
         let responseBytes = Encoding.UTF8.GetBytes(responseString)
         let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
         channel.BasicPublish(addr = addr, basicProperties = replyProps, body = responseBytes)

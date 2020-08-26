@@ -5,10 +5,13 @@ open RabbitMQ.Client
 open RabbitMQ.Client.Events
 open System.Collections.Concurrent
 open System.Text
+open Newtonsoft.Json
 open System
 open System.Collections.Generic
 open System.IO
 open Microsoft.FSharp.Control
+open Model
+open Validation
 
 type RPCInfo = {
     connection : IConnection;
@@ -23,33 +26,49 @@ let onMessageReceived (respQueue:BlockingCollection<string>) correlationId (ea:B
     if(ea.BasicProperties.CorrelationId = correlationId) then
         respQueue.Add(response)
 
-let createClient (requestJsonString:string) = 
+let createRpcInfoObject () = 
     let factory = ConnectionFactory()
-    factory.HostName <- "localhost" //todo: does F# have object initializer?
+    factory.HostName <- "localhost" //todo: does F# have object initializer? //todo: get host name from config file
     let respQueue = new BlockingCollection<string>()
     let connection = factory.CreateConnection()
     let channel = connection.CreateModel()
-    let replyQueueName = channel.QueueDeclare().QueueName
     let consumer = EventingBasicConsumer(channel)
     let props = channel.CreateBasicProperties();
     props.CorrelationId <- Guid.NewGuid().ToString()
-    props.ReplyTo <- replyQueueName
+    props.ReplyTo <- channel.QueueDeclare().QueueName
     consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
     
-    let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
-
-    channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=props, body=msgBytes)
-
-    channel.BasicConsume(consumer = consumer, queue=replyQueueName, autoAck=true) |> ignore
-
-    let rpcInfo = {
+    {
         connection = connection;
         channel = channel;
         consumer = consumer;
         respQueue = respQueue;
         props = props;
     }
-    rpcInfo
+
+let deserializeEmployeeFromJson (jsonString:string) = 
+    let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
+    employee
+
+let publishToMsgQueue rpcInfo (jsonString:string) = 
+    let msgBytes = Encoding.UTF8.GetBytes(jsonString)
+    rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes) //todo: routing key from config file
+
+    rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.props.ReplyTo, autoAck=true)
+
+let createClient (requestJsonString:string) = 
+    let employee = deserializeEmployeeFromJson requestJsonString
+    let opResult = Validation.validateFirstName employee.Name
+    let rpcInfo = createRpcInfoObject ()
+    
+    match opResult.ValidationResult = ValidationResults.Success with 
+        | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
+            publishToMsgQueue rpcInfo requestJsonString |> ignore
+        | false -> 
+            let opResultStr = JsonConvert.SerializeObject(opResult)
+            rpcInfo.respQueue.Add(opResultStr) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
+
+    rpcInfo 
 
 //use this function to return a success value without microservices running
 let create_dummy (httpContext:HttpContext) = 
@@ -57,6 +76,7 @@ let create_dummy (httpContext:HttpContext) =
     httpContext.Response.WriteAsync("{Status:'Success'}")
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
+//todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 let create (httpContext:HttpContext) =
     use reader = new StreamReader(httpContext.Request.Body)
     let bodyTask = reader.ReadToEndAsync()

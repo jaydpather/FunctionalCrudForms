@@ -1,47 +1,51 @@
 import React, { Component } from 'react'
+import { ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank } from '../fable-include/Model'
 
+import { validateFirstName } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
     state = { 
         name:"", 
-        isSuccess: false,
-        isError: false
+        validationState: ValidationResults$$$get_New()
     };
+
     self = this;
 
-    handleSubmit = async(event) => {
-        this.setState(
-            {
-                name: this.state.name,
-                isSuccess: false,
-                isError: true
-            }
-        );
-    };
-    
     //todo: remove this function from component
     submitForm = async(event) => {
+        //alert(JSON.stringify(ui));
         var data = { Name:this.state.name }
         var self = this;
-        axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
+        var opResult = validateFirstName(this.state.name)
+        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        //if(true){ //temp: allow posting of blank names, to test server-side validation
+            self.setState({
+                name: self.state.name,
+                validationState: ValidationResults$$$get_Saving() //
+            });
+            axios.post("http://localhost:7000/employee/create", JSON.stringify(data))
             .then(function (response) {
-                //alert(response.data);
-                alert(JSON.stringify(response.data));
+                //alert(JSON.stringify(response.data));
                 self.setState({
                     name: self.state.name,
-                    isSuccess: true,
-                    isError: false
+                    validationState: response.data.ValidationResult
                 });
             })
             .catch(function(error){
-                alert(error);
+                //alert("error:" + error);
                 self.setState({
                     name: self.state.name,
-                    isSuccess: false,
-                    isError: true   
+                    validationState: ValidationResults$$$get_UnknownError()
                 });
             })
+        }
+        else{
+            self.setState({
+                name: self.state.name,
+                validationState: opResult.ValidationResult
+            });
+        }
     }
 
     render () {
@@ -54,17 +58,25 @@ export default class extends Component {
         
         const successMsgStyle = {
             "color": "#030",
-            "background-color": "#DFD",
+            "backgroundColor": "#DFD",
             "padding": "3px",
             "width": "20%",
           };
       
         const failureMsgStyle = {
             "color": "#300",
-            "background-color": "#FDD",
+            "backgroundColor": "#FDD",
             "padding": "3px",
             "width": "40%",
           };
+
+        const savingMsgStyle = {
+            "color": "#001375",
+            "backgroundColor": "#DAEDFF",
+            "padding": "3px",
+            "width": "40%",
+        };
+        
         return(
             <div style={formStyle}>
                 <h1>
@@ -72,10 +84,10 @@ export default class extends Component {
                 </h1>
                 Name: 
                 <input type="text" id="txtName" value={this.state.name} 
+                    //todo: move onChange handler to new method (too unreadable here)
                     onChange =  { e => this.setState({ 
                         name:e.target.value, 
-                        isSuccess: this.state.isSuccess,
-                        isError: this.state.isError 
+                        validationState: this.state.validationState
                     }) } 
                 />
                 <br />
@@ -84,16 +96,31 @@ export default class extends Component {
                 <br />
                 <br />
                 {
-                    this.state.isSuccess ?
+                    (this.state.validationState == ValidationResults$$$get_Saving()) ?
+                        <div id="divSuccessMsg" style={savingMsgStyle}>
+                            Saving...
+                        </div>
+                    :
+                        null
+                }
+                {
+                    (this.state.validationState == ValidationResults$$$get_Success()) ?
                         <div id="divSuccessMsg" style={successMsgStyle}>
                             Saved successfully.
                         </div>
                     :
                         null
                 }
-
                 {
-                    this.state.isError?
+                    (0 != (this.state.validationState & ValidationResults$$$get_FirstNameBlank())) ?
+                        <div id="divFailureMsg" style={failureMsgStyle}>
+                            First name cannot be blank.
+                        </div>
+                    :
+                        null
+                }
+                {
+                    (0 != (this.state.validationState & ValidationResults$$$get_UnknownError())) ?
                         <div id="divFailureMsg" style={failureMsgStyle}>
                             Unable to save: unknown error occurred.
                         </div>
