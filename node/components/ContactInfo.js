@@ -43,7 +43,7 @@ export default class extends Component {
         else{
             self.setState({
                 name: self.state.name,
-                validationState: ValidationResults$$$get_FirstNameBlank()
+                validationState: opResult.ValidationResult
             });
         }
     }
@@ -58,23 +58,23 @@ export default class extends Component {
         
         const successMsgStyle = {
             "color": "#030",
-            "background-color": "#DFD",
+            "backgroundColor": "#DFD",
             "padding": "3px",
             "width": "20%",
           };
       
         const failureMsgStyle = {
             "color": "#300",
-            "background-color": "#FDD",
+            "backgroundColor": "#FDD",
             "padding": "3px",
             "width": "40%",
           };
 
         const savingMsgStyle = {
-        "color": "#001375",
-        "background-color": "#DAEDFF",
-        "padding": "3px",
-        "width": "40%",
+            "color": "#001375",
+            "backgroundColor": "#DAEDFF",
+            "padding": "3px",
+            "width": "40%",
         };
         
         return(

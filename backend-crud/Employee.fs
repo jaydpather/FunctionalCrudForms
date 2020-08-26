@@ -64,11 +64,6 @@ let createClient (requestJsonString:string) =
     match opResult.ValidationResult = ValidationResults.Success with 
         | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
             publishToMsgQueue rpcInfo requestJsonString |> ignore
-            // let msgBytes = Encoding.UTF8.GetBytes(requestJsonString)
-            // rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes)
-
-            // rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.channel.QueueDeclare().QueueName, autoAck=true) |> ignore
-            
         | false -> 
             let opResultStr = JsonConvert.SerializeObject(opResult)
             rpcInfo.respQueue.Add(opResultStr) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
