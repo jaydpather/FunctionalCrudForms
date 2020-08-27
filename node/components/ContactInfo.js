@@ -89,7 +89,7 @@ export default class extends Component {
                     Create Employee
                 </h1>
                 First Name: 
-                <input type="text" id="txtName" value={this.state.name} 
+                <input type="text" id="txtName" value={this.state.firstName} 
                     //todo: move onChange handler to new method (too unreadable here)
                     onChange =  { e => this.setState({ 
                         firstName:e.target.value, 
@@ -102,7 +102,7 @@ export default class extends Component {
                 <input type="text" id="txtLastName" value={this.state.lastName} 
                     //todo: move onChange handler to new method (too unreadable here)
                     onChange =  { e => this.setState({ 
-                        firstName: this.state.name,
+                        firstName: this.state.firstName,
                         lastName: e.target.value, 
                         validationState: this.state.validationState
                     }) } 
