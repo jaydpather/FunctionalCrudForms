@@ -7,6 +7,8 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 
+open Serilog
+
 type Startup() =
 
     // This method gets called by the runtime. Use this method to add services to the container.
@@ -27,3 +29,7 @@ type Startup() =
               //todo: why do we get a compile error here if this is not a lambda? Can't see why the 2nd param can't just be RandomNumbers.insertOne, instead of a lambda that calls RandomNumbers.insertOne
             //todo: use generic exception page, for when we catch an Exception while writing a response                 
             ) |> ignore  
+
+        Log.Logger <- LoggerConfiguration().MinimumLevel.Debug()
+                .WriteTo.File("logfile.log", rollingInterval = RollingInterval.Day)
+                .CreateLogger()
