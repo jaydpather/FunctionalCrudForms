@@ -75,7 +75,7 @@ let writeHttpResponse (httpContext:HttpContext) responseString =
     httpContext.Response.WriteAsync(responseString)
 
 //todo: separate into logging layer, with injection
-let logError ex = 
+let logError ex =  //todo: logError func is dup'd in microservice
     ex.ToString()
     |> Serilog.Log.Error
 
@@ -107,7 +107,7 @@ let create (httpContext:HttpContext) =
                     rpcInfo
                     |> publishToMsgQueue requestJsonString 
                     |> ignore
-                    rpcInfo.respQueue.Take()
+                    rpcInfo.respQueue.Take() //todo: figure out how to handle a timeout here. (e.g., if microservice isn't running). currently, the front end just says "saving..." and hangs
                 | false -> 
                     JsonConvert.SerializeObject(opResult)
 

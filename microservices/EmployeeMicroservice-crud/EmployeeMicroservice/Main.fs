@@ -9,6 +9,7 @@ open MongoDB.Driver
 open MongoDB.Bson
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
+open Serilog
 open Model
 
 let convertToDictionary (record) =
@@ -33,6 +34,10 @@ let writeToMongo record =
     collection.InsertOne(document) 
         |> ignore
 
+let logError ex = 
+    ex.ToString()
+    |> Serilog.Log.Error
+
 let startMsgQueueListener () = 
     let factory = ConnectionFactory()
     factory.HostName <- "localhost"
@@ -49,13 +54,19 @@ let startMsgQueueListener () =
         let props = ea.BasicProperties
         let replyProps = channel.CreateBasicProperties()
         replyProps.CorrelationId <- props.CorrelationId
-        let message = Encoding.UTF8.GetString(body)
+        
+        let operationResult = 
+            try //this try/with does not cover anything related to RabbitMQ. If there's an issue with RabbitMQ, we can't write a response back, so we might as well let the app crash.
+                let message = Encoding.UTF8.GetString(body)
+                let employeeObj = JsonConvert.DeserializeObject<Employee>(message)
+                writeToMongo employeeObj //todo: try/catch, handle/log error
+                { ValidationResult = ValidationResults.Success }
+            with
+            | ex -> 
+                logError ex |> ignore
+                { ValidationResult = ValidationResults.UnknownError }
 
-        let employeeObj = JsonConvert.DeserializeObject<Employee>(message)
-        writeToMongo employeeObj //todo: try/catch, handle/log error
 
-
-        let operationResult = { ValidationResult = 0 }
         let responseString = JsonConvert.SerializeObject operationResult
         let responseBytes = Encoding.UTF8.GetBytes(responseString)
         let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
@@ -63,11 +74,21 @@ let startMsgQueueListener () =
 
         printfn "received %s" message
         printfn "publishing: %s" responseString
-    
+
 [<EntryPoint>]
 let main argv =
-    printfn "Employee microservice running"
-    let foo = MessageQueueLayer.MessageQueueLayer.foo()
-    printfn "foo %i" foo
-    startMsgQueueListener ()
-    0 // return an integer exit code
+    try
+        printfn "Employee microservice running"
+        let foo = MessageQueueLayer.MessageQueueLayer.foo()
+        printfn "foo %i" foo
+        Log.Logger <- LoggerConfiguration().MinimumLevel.Debug()
+                .WriteTo.File("logfile.log", rollingInterval = RollingInterval.Day)
+                .CreateLogger()
+
+        startMsgQueueListener ()
+        0
+    with
+    | ex -> 
+        logError ex |> ignore
+        -1 //let the app exit. container orchestration should restart the microservice.
+     // return an integer exit code

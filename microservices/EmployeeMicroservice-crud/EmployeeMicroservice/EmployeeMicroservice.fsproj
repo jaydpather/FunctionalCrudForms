@@ -10,6 +10,8 @@
     <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
       <Name>Shared.fsproj</Name>
     </ProjectReference>
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00887" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.fs" />
