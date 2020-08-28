@@ -50,39 +50,31 @@ let deserializeEmployeeFromJson (jsonString:string) =
     let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
     employee
 
-let publishToMsgQueue rpcInfo (jsonString:string) = 
+let publishToMsgQueue (jsonString:string) rpcInfo = 
     let msgBytes = Encoding.UTF8.GetBytes(jsonString)
     rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes) //todo: routing key from config file
 
     rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.props.ReplyTo, autoAck=true)
-
-let createClient (requestJsonString:string) = 
-    let employee = deserializeEmployeeFromJson requestJsonString
-    let opResult = Validation.validateEmployee employee
-    let rpcInfo = createRpcInfoObject ()
-    
-    match opResult.ValidationResult = ValidationResults.Success with 
-        | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
-            publishToMsgQueue rpcInfo requestJsonString |> ignore
-        | false -> 
-            let opResultStr = JsonConvert.SerializeObject(opResult)
-            rpcInfo.respQueue.Add(opResultStr) //todo: create ValidationResult object and convert to JSON string. (move ValidationResult into )
-
-    rpcInfo 
 
 //use this function to return a success value without microservices running
 let create_dummy (httpContext:HttpContext) = 
     httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
     httpContext.Response.WriteAsync("{Status:'Success'}")
 
-//todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
-//todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
-let create (httpContext:HttpContext) =
+let readRequestBody (httpContext:HttpContext) = 
     use reader = new StreamReader(httpContext.Request.Body)
     let bodyTask = reader.ReadToEndAsync()
     bodyTask.Wait()
     let body = bodyTask.Result
-    //let body = bodyTask.GetAwaiter().GetResult() 
+    body
+
+let writeHttpResponse (httpContext:HttpContext) responseString = 
+    httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
+    httpContext.Response.WriteAsync(responseString)
+//todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
+//todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
+let create (httpContext:HttpContext) =
+    let requestJsonString = readRequestBody httpContext
     (*
         * todo: confirm with a load test whether or not this gives more scalability than doing bodyTask.Wait() 
           * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
@@ -94,9 +86,27 @@ let create (httpContext:HttpContext) =
               * if I wanted to run some other code while waiting to read the stream, I would run that code in another thread
     *)
 
-    let rpcInfo = createClient body
+    //todo2: try/catch and Success/Error. could receive invalid JSON
+    let employee = deserializeEmployeeFromJson requestJsonString
+    //todo1: validation method should be called from create function. We should only call this function once we're sure we want to write to the message queue
+    //  * remove this function. paste contents into create
+    let opResult = Validation.validateEmployee employee
     
-    let responseString = rpcInfo.respQueue.Take()
-    httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
-    httpContext.Response.WriteAsync(responseString)
+    let responseStr = 
+        match opResult.ValidationResult = ValidationResults.Success with 
+            | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
+                //todo2: publishToMsgQueue should have a try/catch wrapper and return a Success/Error
+                //todo2: this method returns a Success<RpcInfo> or Error<Exception>
+                let rpcInfo = createRpcInfoObject ()
+                rpcInfo
+                |> publishToMsgQueue requestJsonString 
+                |> ignore
+                rpcInfo.respQueue.Take()
+            | false -> 
+                JsonConvert.SerializeObject(opResult)
+
+    writeHttpResponse httpContext responseStr
+
+    //todo1: extract function: writeHttpResponse
+    
     

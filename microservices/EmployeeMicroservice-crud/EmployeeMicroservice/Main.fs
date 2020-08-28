@@ -22,8 +22,8 @@ let convertToDictionary (record) =
 
 let writeToMongo record = 
     let client = MongoClient()
-    let database = client.GetDatabase("FunctionalCrudForms")
-    let collection = database.GetCollection<BsonDocument>("Employee");
+    let database = client.GetDatabase("FunctionalCrudForms") //todo: get db name from config file
+    let collection = database.GetCollection<BsonDocument>("Employee"); //todo: get collection name from config file
     
     let document = 
         record 
