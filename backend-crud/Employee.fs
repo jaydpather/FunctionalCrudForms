@@ -71,42 +71,48 @@ let readRequestBody (httpContext:HttpContext) =
 let writeHttpResponse (httpContext:HttpContext) responseString = 
     httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
     httpContext.Response.WriteAsync(responseString)
+
+let logError ex = 
+    ex.ToString()
+    |> printfn "%s" 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 let create (httpContext:HttpContext) =
-    let requestJsonString = readRequestBody httpContext
-    (*
-        * todo: confirm with a load test whether or not this gives more scalability than doing bodyTask.Wait() 
-          * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
-          * Jayd's opinion: bodyTask.Wait() is more scalable b/c it DOESN'T create a new thread
-            * .NET creates a new thread for each request
-              * this means other users never have to wait for this thread
-              * since we're on the back end, there's nothing else for this thread to do. (unlike the UI, where the window appears to be frozen b/c it can't be dragged while the UI thread is blocked)
-              * creating more threads means the server spends more time switching between threads
-              * if I wanted to run some other code while waiting to read the stream, I would run that code in another thread
-    *)
+    try
+        let requestJsonString = readRequestBody httpContext
+        (*
+            * todo: confirm with a load test whether or not this gives more scalability than doing bodyTask.Wait() 
+              * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
+              * Jayd's opinion: bodyTask.Wait() is more scalable b/c it DOESN'T create a new thread
+                * .NET creates a new thread for each request
+                  * this means other users never have to wait for this thread
+                  * since we're on the back end, there's nothing else for this thread to do. (unlike the UI, where the window appears to be frozen b/c it can't be dragged while the UI thread is blocked)
+                  * creating more threads means the server spends more time switching between threads
+                  * if I wanted to run some other code while waiting to read the stream, I would run that code in another thread
+        *)
 
-    //todo2: try/catch and Success/Error. could receive invalid JSON
-    let employee = deserializeEmployeeFromJson requestJsonString
-    //todo1: validation method should be called from create function. We should only call this function once we're sure we want to write to the message queue
-    //  * remove this function. paste contents into create
-    let opResult = Validation.validateEmployee employee
-    
-    let responseStr = 
-        match opResult.ValidationResult = ValidationResults.Success with 
-            | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
-                //todo2: publishToMsgQueue should have a try/catch wrapper and return a Success/Error
-                //todo2: this method returns a Success<RpcInfo> or Error<Exception>
-                let rpcInfo = createRpcInfoObject ()
-                rpcInfo
-                |> publishToMsgQueue requestJsonString 
-                |> ignore
-                rpcInfo.respQueue.Take()
-            | false -> 
-                JsonConvert.SerializeObject(opResult)
+        //todo2: try/catch and Success/Error. could receive invalid JSON
+        let employee = deserializeEmployeeFromJson requestJsonString
+        let opResult = Validation.validateEmployee employee
+        let responseStr = 
+            match opResult.ValidationResult = ValidationResults.Success with 
+                | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
+                    //todo2: publishToMsgQueue should have a try/catch wrapper and return a Success/Error
+                    //todo2: this method returns a Success<RpcInfo> or Error<Exception>
+                    let rpcInfo = createRpcInfoObject ()
+                    rpcInfo
+                    |> publishToMsgQueue requestJsonString 
+                    |> ignore
+                    rpcInfo.respQueue.Take()
+                | false -> 
+                    JsonConvert.SerializeObject(opResult)
 
-    writeHttpResponse httpContext responseStr
+        writeHttpResponse httpContext responseStr
+    with
+    | ex -> 
+        logError ex |> ignore
+        { ValidationResult = ValidationResults.UnknownError }
+        |> JsonConvert.SerializeObject
+        |> writeHttpResponse httpContext 
 
-    //todo1: extract function: writeHttpResponse
-    
     
