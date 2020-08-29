@@ -96,6 +96,8 @@ let create (httpContext:HttpContext) =
         *)
 
         //todo2: try/catch and Success/Error. could receive invalid JSON
+        //todo2: shared logging layer between backend and microservices?
+        //todo1: move these 3 lines into bus layer func
         let employee = deserializeEmployeeFromJson requestJsonString
         let opResult = Validation.validateEmployee employee
         let responseStr = 
@@ -103,7 +105,7 @@ let create (httpContext:HttpContext) =
                 | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
                     //todo2: publishToMsgQueue should have a try/catch wrapper and return a Success/Error
                     //todo2: this method returns a Success<RpcInfo> or Error<Exception>
-                    let rpcInfo = createRpcInfoObject ()
+                    let rpcInfo = createRpcInfoObject () //todo 1: create MQ Layer, startup injects function pointer
                     rpcInfo
                     |> publishToMsgQueue requestJsonString 
                     |> ignore
