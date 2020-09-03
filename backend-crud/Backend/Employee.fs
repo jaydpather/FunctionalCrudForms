@@ -13,7 +13,7 @@ open Microsoft.FSharp.Control
 open Model
 open Validation
 
-open LoggingService
+open RebelSoftware.LoggingService
 //todo: separate into message queue layer
 
 type RPCInfo = {
@@ -77,7 +77,7 @@ let writeHttpResponse (httpContext:HttpContext) responseString =
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
-let create (httpContext:HttpContext) =
+let create (logger:Logging.Logger) (httpContext:HttpContext) =
     try
         let requestJsonString = readRequestBody httpContext
         (*
@@ -96,6 +96,10 @@ let create (httpContext:HttpContext) =
         //todo1: move these 3 lines into bus layer func
         let employee = deserializeEmployeeFromJson requestJsonString
         let opResult = Validation.validateEmployee employee
+        //todo: extract this pattern match into a new function, then this whole thing can pipe together
+        //  * this will be the most important function to UT. this is where we can check which status code it returned
+        //  * (this means we should return an object from the extracted method, not a string)
+        //also need to return OperationResult from the try/catch, then serialize in another method. (for UT asertions)
         let responseStr = 
             match opResult.ValidationResult = ValidationResults.Success with 
                 | true -> //todo: why do we need successValue? (it doesn't compile if you reference ValidationResults.Success in the pattern match)
@@ -112,7 +116,7 @@ let create (httpContext:HttpContext) =
         writeHttpResponse httpContext responseStr
     with
     | ex -> 
-        LoggingService.logException ex |> ignore
+        logger.LogException ex |> ignore
         { ValidationResult = ValidationResults.UnknownError }
         |> JsonConvert.SerializeObject
         |> writeHttpResponse httpContext 

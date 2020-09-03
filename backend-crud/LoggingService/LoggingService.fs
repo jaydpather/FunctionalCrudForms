@@ -1,13 +1,23 @@
-﻿namespace LoggingService
+﻿namespace RebelSoftware.LoggingService
 
 open Serilog
+open System
 
-module LoggingService =
-    let initializeLogging () = 
+module Logging =
+    
+    type Logger = {
+        LogException : Exception -> unit
+    }
+
+    let private initializeLogging () = 
         Log.Logger <- LoggerConfiguration().MinimumLevel.Debug()
                 .WriteTo.File("logfile.log", rollingInterval = RollingInterval.Day)
                 .CreateLogger()
 
-    let logException ex = 
+    let private logException ex = 
         ex.ToString()
         |> Serilog.Log.Error
+
+    let createLogger () = 
+        initializeLogging()
+        { LogException = logException }
