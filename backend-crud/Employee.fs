@@ -13,6 +13,7 @@ open Microsoft.FSharp.Control
 open Model
 open Validation
 
+open LoggingService
 //todo: separate into message queue layer
 
 type RPCInfo = {
@@ -74,11 +75,6 @@ let writeHttpResponse (httpContext:HttpContext) responseString =
     httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
     httpContext.Response.WriteAsync(responseString)
 
-//todo: separate into logging layer, with injection
-let logError ex =  //todo: logError func is dup'd in microservice
-    ex.ToString()
-    |> Serilog.Log.Error
-
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 let create (httpContext:HttpContext) =
@@ -116,7 +112,7 @@ let create (httpContext:HttpContext) =
         writeHttpResponse httpContext responseStr
     with
     | ex -> 
-        logError ex |> ignore
+        LoggingService.logException ex |> ignore
         { ValidationResult = ValidationResults.UnknownError }
         |> JsonConvert.SerializeObject
         |> writeHttpResponse httpContext 
