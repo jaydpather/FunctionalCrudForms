@@ -36,3 +36,6 @@ backend-crud/Backend/obj/
 
 backend-crud/LoggingService/bin/
 backend-crud/LoggingService/obj/
+
+backend-crud/MessageQueueService/bin/
+backend-crud/MessageQueueService/obj/
