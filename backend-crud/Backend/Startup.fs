@@ -9,6 +9,7 @@ open Microsoft.Extensions.Hosting
 
 open RebelSoftware.LoggingService
 open RebelSoftware.MessageQueueService
+open RebelSoftware.HttpService
 
 type Startup() =
 
@@ -21,6 +22,8 @@ type Startup() =
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
         let logger = Logging.createLogger ()
         let messageQueuer = MessageQueueing.createMessageQueuer ()
+        let getHttpService httpContext = 
+            Http.createHttpServer httpContext
 
         if env.IsDevelopment() then
             app.UseDeveloperExceptionPage() |> ignore
@@ -28,7 +31,7 @@ type Startup() =
         app.UseRouting() |> ignore
         
         app.UseEndpoints(fun endpoints ->
-            endpoints.MapPost("/employee/create", fun context -> Employee.create logger messageQueuer context) |> ignore
+            endpoints.MapPost("/employee/create", fun context -> Employee.create logger messageQueuer (getHttpService context)) |> ignore
             //endpoints.MapPost("/employee/create", fun context -> Employee.create_dummy context)
               //todo: why do we get a compile error here if this is not a lambda? Can't see why the 2nd param can't just be RandomNumbers.insertOne, instead of a lambda that calls RandomNumbers.insertOne
             //todo: use generic exception page, for when we catch an Exception while writing a response                 

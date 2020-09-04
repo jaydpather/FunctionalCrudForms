@@ -14,6 +14,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpService.fs" />
     <Compile Include="Employee.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />

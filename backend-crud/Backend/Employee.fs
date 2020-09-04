@@ -10,6 +10,7 @@ open Validation
 
 open RebelSoftware.LoggingService
 open RebelSoftware.MessageQueueService
+open RebelSoftware.HttpService.Http
 
 let deserializeEmployeeFromJson (jsonString:string) = 
     let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
@@ -34,9 +35,9 @@ let writeHttpResponse (httpContext:HttpContext) responseString =
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
-let create (logger:Logging.Logger) (messageQueuer:MessageQueueing.MessageQueuer) (httpContext:HttpContext) =
+let create (logger:Logging.Logger) (messageQueuer:MessageQueueing.MessageQueuer) (httpServer:HttpServer) =
     try
-        let requestJsonString = readRequestBody httpContext
+        let requestJsonString = httpServer.ReadRequestBody ()
         (*
             * todo: confirm with a load test whether or not this gives more scalability than doing bodyTask.Wait() 
               * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
@@ -51,7 +52,7 @@ let create (logger:Logging.Logger) (messageQueuer:MessageQueueing.MessageQueuer)
         //todo2: try/catch and Success/Error. could receive invalid JSON
         //todo2: shared logging layer between backend and microservices?
         //todo1: move these 3 lines into bus layer func
-        let employee = deserializeEmployeeFromJson requestJsonString
+        let employee = httpServer.DeserializeEmployeeFromJson requestJsonString //deserializeEmployeeFromJson requestJsonString
         let opResult = Validation.validateEmployee employee
         //todo: extract this pattern match into a new function, then this whole thing can pipe together
         //  * this will be the most important function to UT. this is where we can check which status code it returned
@@ -64,14 +65,15 @@ let create (logger:Logging.Logger) (messageQueuer:MessageQueueing.MessageQueuer)
                     //todo2: this method returns a Success<RpcInfo> or Error<Exception>
                     messageQueuer.WriteMessageAndGetResponse requestJsonString
                 | false -> 
-                    JsonConvert.SerializeObject(opResult)
+                    opResult :> obj
+                    |> httpServer.SerializeToJson  //JsonConvert.SerializeObject(opResult)
 
-        writeHttpResponse httpContext responseStr
+        httpServer.WriteHttpResponse responseStr
     with
     | ex -> 
         logger.LogException ex |> ignore
         { ValidationResult = ValidationResults.UnknownError }
         |> JsonConvert.SerializeObject
-        |> writeHttpResponse httpContext 
+        |> httpServer.WriteHttpResponse 
 
     
