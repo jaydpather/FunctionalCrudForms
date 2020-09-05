@@ -34,6 +34,10 @@ backend-crud/Backend/.ionide/
 backend-crud/Backend/bin/
 backend-crud/Backend/obj/
 
+backend-crud/BackendTest/.ionide/
+backend-crud/BackendTest/bin/
+backend-crud/BackendTest/obj/
+
 backend-crud/LoggingService/bin/
 backend-crud/LoggingService/obj/
 
