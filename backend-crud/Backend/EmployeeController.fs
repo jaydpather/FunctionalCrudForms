@@ -1,4 +1,4 @@
-module Employee
+module EmployeeController
 
 open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
