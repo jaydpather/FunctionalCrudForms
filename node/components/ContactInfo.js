@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Employee, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank,
         ValidationResults$$$get_LastNameBlank } from '../fable-include/Model'
 
-import { validateEmployee } from '../fable-include/Validation'
+import { getEmployeeValidator } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
@@ -19,7 +19,8 @@ export default class extends Component {
         //alert(JSON.stringify(ui));
         var employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
         var self = this;
-        var opResult = validateEmployee(employee)
+        var validator = getEmployeeValidator();
+        var opResult = validator.ValidateEmployee(employee)
         if(ValidationResults$$$get_Success() == opResult.ValidationResult){
         //if(true){ //temp: allow posting of blank names, to test server-side validation
             self.setState({

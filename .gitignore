@@ -30,6 +30,12 @@ microservices/EmployeeMicroservice-crud/MessageQueueLayer/bin/
 microservices/EmployeeMicroservice-crud/MessageQueueLayer/obj/
 microservices/EmployeeMicroservice-crud/MessageQueueLayer/.ionide/
 
-backend-crud/.ionide/
-backend-crud/bin/
-backend-crud/obj/
+backend-crud/Backend/.ionide/
+backend-crud/Backend/bin/
+backend-crud/Backend/obj/
+
+backend-crud/LoggingService/bin/
+backend-crud/LoggingService/obj/
+
+backend-crud/MessageQueueService/bin/
+backend-crud/MessageQueueService/obj/
