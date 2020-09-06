@@ -22,8 +22,7 @@ module ControllerTests =
         let mutable _messageQueue = Unchecked.defaultof<string list>
         let mutable _messageQueuer = Unchecked.defaultof<MessageQueuer>
 
-        let mutable _httpResponses = Unchecked.defaultof<string list>
-        let mutable _httpServer = Unchecked.defaultof<HttpServer>  
+        
 
         //this function was purposely dup'd from HttpServer. todo: place this in a base class for all tests
         let deserializeEmployeeFromJson (jsonString:string) = 
@@ -35,6 +34,8 @@ module ControllerTests =
             let jsonString = JsonConvert.SerializeObject object
             jsonString
 
+        let mutable _httpResponses = Unchecked.defaultof<string list>
+
         let writeHttpResponse str =
             let taskAction=  Action( fun () ->
                 _httpResponses <- str :: _httpResponses)
@@ -42,12 +43,12 @@ module ControllerTests =
             task.Start()
             task.Wait() //make sure the task is done by the time we reach assertions
             task            
-
-        let createMockHttpServer readRequestBodyFn = {
+        
+        let mutable _httpServer = {
             DeserializeEmployeeFromJson = deserializeEmployeeFromJson;
             SerializeToJson = serializeToJson;
             WriteHttpResponse = writeHttpResponse;
-            ReadRequestBody = readRequestBodyFn;
+            ReadRequestBody = fun () -> { FirstName = "Rajesh"; LastName = "Patel" } |> serializeToJson;
         }
 
         [<SetUp>]
@@ -69,16 +70,12 @@ module ControllerTests =
 
         [<Test>]
         member this.ReturnsResponseFromMQWhenRequestBodyIsValid() =
-            let mockRequestBody = { FirstName = "Rajesh"; LastName = "Patel" } |> serializeToJson
-            let httpServer = 
-                fun () -> mockRequestBody
-                |> createMockHttpServer 
             let mockValidator = { 
                 ValidateEmployee = fun employee -> { 
                     ValidationResult = ValidationResults.Success 
                 } 
             }            
-            EmployeeController.create _logger _messageQueuer httpServer mockValidator
+            EmployeeController.create _logger _messageQueuer _httpServer mockValidator
             |> ignore
 
             Assert.AreEqual(1, _httpResponses.Length)
