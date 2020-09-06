@@ -40,6 +40,7 @@ module ControllerTests =
                 _httpResponses <- str :: _httpResponses)
             let task = new Task(taskAction)
             task.Start()
+            task.Wait() //make sure the task is done by the time we reach assertions
             task            
 
         let createMockHttpServer readRequestBodyFn = {
@@ -67,8 +68,8 @@ module ControllerTests =
             _httpResponses <- []
 
         [<Test>]
-        member this.TestMethodPassing() =
-            let mockRequestBody = { ValidationResult = ValidationResults.Success } |> serializeToJson
+        member this.ReturnsResponseFromMQWhenRequestBodyIsValid() =
+            let mockRequestBody = { FirstName = "Rajesh"; LastName = "Patel" } |> serializeToJson
             let httpServer = 
                 fun () -> mockRequestBody
                 |> createMockHttpServer 
@@ -80,5 +81,6 @@ module ControllerTests =
             EmployeeController.create _logger _messageQueuer httpServer mockValidator
             |> ignore
 
-            Assert.IsTrue(true)
+            Assert.AreEqual(1, _httpResponses.Length)
+            Assert.True(_httpResponses.[0].Contains("response to")) //this means we got the response from the mock MQ service
     
