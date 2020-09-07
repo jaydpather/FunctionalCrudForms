@@ -42,12 +42,17 @@ module ControllerTests =
             task.Wait() //make sure the task is done by the time we reach assertions
             task            
         
-        let mutable _httpServer = {
-            DeserializeEmployeeFromJson = deserializeEmployeeFromJson;
-            SerializeToJson = serializeToJson;
-            WriteHttpResponse = writeHttpResponse;
-            ReadRequestBody = fun () -> { FirstName = "Rajesh"; LastName = "Patel" } |> serializeToJson;
-        }
+        let mutable _httpServer = Unchecked.defaultof<HttpServer>
+
+        let _defaultRequestBody = { FirstName = "Rajesh"; LastName = "Patel" }
+
+        let createHttpServer readRequestBodyFn =
+            _httpServer <- {
+                DeserializeEmployeeFromJson = deserializeEmployeeFromJson;
+                SerializeToJson = serializeToJson;
+                WriteHttpResponse = writeHttpResponse;
+                ReadRequestBody = readRequestBodyFn;
+            }
 
         [<SetUp>]
         member this.Setup() = 
@@ -65,6 +70,8 @@ module ControllerTests =
             }
 
             _httpResponses <- []
+            fun () -> _defaultRequestBody |> serializeToJson
+            |> createHttpServer 
 
         [<Test>]
         member this.ReturnsResponseFromMQWhenEmployeeIsValid() =
@@ -77,10 +84,11 @@ module ControllerTests =
             |> ignore
             Assert.AreEqual(1, _httpResponses.Length)
             Assert.True(_httpResponses.[0].Contains("response to")) //this means we got the response from the mock MQ service
+            Assert.AreEqual(0, _logMessagesReceived.Length)
 
         [<Test>]
         member this.DoesNotSubmitToMQWhenEmployeeIsInValid() =
-            let failureResults = [ ValidationResults.FirstNameBlank; ValidationResults.LastNameBlank; ValidationResults.UnknownError ] //note: each time we add a failure result, this list becomes out of date
+            let failureResults = [ ValidationResults.FirstNameBlank; ValidationResults.LastNameBlank; ValidationResults.UnknownError ] //note: each time we add a failure result, this list becomes out of date. //todo: find a way to fix this: use reflection to iterate over all ValidationResults? How do we filter out the Success cases and UI states (like Saving)?
 
             let testFn curFailureResult = 
                 let opResult = { 
@@ -94,7 +102,28 @@ module ControllerTests =
                 
                 Assert.AreEqual(1, _httpResponses.Length)
                 Assert.False(_httpResponses.[0].Contains("response to")) //this means we did NOT get the response from the mock MQ service
-                Assert.AreEqual(opResult |> serializeToJson, _httpResponses.[0])
-                _httpResponses <- []
+                Assert.AreEqual(opResult |> serializeToJson, _httpResponses.[0]) //controller should write the OperationResult (w/ ValidationResult property) to HTTP response
+                Assert.AreEqual(0, _logMessagesReceived.Length)
+
+                _httpResponses <- [] //prepare for next loop iteration
 
             List.map testFn failureResults |> ignore
+
+        [<Test>]
+        member this.LogsMessageWhenExceptionThrown() =
+            fun () -> "invalid JSON"
+            |> createHttpServer
+            
+            let mockValidator = { 
+                ValidateEmployee = fun employee -> { 
+                    ValidationResult = ValidationResults.Success 
+                } 
+            }            
+            EmployeeController.create _logger _messageQueuer _httpServer mockValidator
+            |> ignore
+            Assert.AreEqual(1, _logMessagesReceived.Length)
+            Assert.AreEqual(1, _httpResponses.Length)
+            let expectedResponseObj = { ValidationResult = ValidationResults.UnknownError }
+            let actualResponseObj = JsonConvert.DeserializeObject<OperationResult>(_httpResponses.[0])
+            Assert.AreEqual(expectedResponseObj, actualResponseObj) //value equality, not physical equality
+
