@@ -22,8 +22,6 @@ module ControllerTests =
         let mutable _messageQueue = Unchecked.defaultof<string list>
         let mutable _messageQueuer = Unchecked.defaultof<MessageQueuer>
 
-        
-
         //this function was purposely dup'd from HttpServer. todo: place this in a base class for all tests
         let deserializeEmployeeFromJson (jsonString:string) = 
             let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
@@ -69,7 +67,7 @@ module ControllerTests =
             _httpResponses <- []
 
         [<Test>]
-        member this.ReturnsResponseFromMQWhenRequestBodyIsValid() =
+        member this.ReturnsResponseFromMQWhenEmployeeIsValid() =
             let mockValidator = { 
                 ValidateEmployee = fun employee -> { 
                     ValidationResult = ValidationResults.Success 
@@ -77,7 +75,26 @@ module ControllerTests =
             }            
             EmployeeController.create _logger _messageQueuer _httpServer mockValidator
             |> ignore
-
             Assert.AreEqual(1, _httpResponses.Length)
             Assert.True(_httpResponses.[0].Contains("response to")) //this means we got the response from the mock MQ service
-    
+
+        [<Test>]
+        member this.DoesNotSubmitToMQWhenEmployeeIsInValid() =
+            let failureResults = [ ValidationResults.FirstNameBlank; ValidationResults.LastNameBlank; ValidationResults.UnknownError ] //note: each time we add a failure result, this list becomes out of date
+
+            let testFn curFailureResult = 
+                let opResult = { 
+                    ValidationResult = curFailureResult
+                } 
+                let mockValidator = { 
+                    ValidateEmployee = fun employee -> opResult
+                }            
+                EmployeeController.create _logger _messageQueuer _httpServer mockValidator
+                |> ignore
+                
+                Assert.AreEqual(1, _httpResponses.Length)
+                Assert.False(_httpResponses.[0].Contains("response to")) //this means we did NOT get the response from the mock MQ service
+                Assert.AreEqual(opResult |> serializeToJson, _httpResponses.[0])
+                _httpResponses <- []
+
+            List.map testFn failureResults |> ignore

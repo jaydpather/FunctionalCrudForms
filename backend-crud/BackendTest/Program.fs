@@ -8,5 +8,7 @@ module Program =
         //this entry point is the only way to debug unit tests
         let employeeControllerTest = EmployeeControllerTest()
         employeeControllerTest.Setup()
-        employeeControllerTest.ReturnsResponseFromMQWhenRequestBodyIsValid()
+        employeeControllerTest.ReturnsResponseFromMQWhenEmployeeIsValid()
+        employeeControllerTest.Setup()
+        employeeControllerTest.DoesNotSubmitToMQWhenEmployeeIsInValid()
         0
