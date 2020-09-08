@@ -4,14 +4,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MessageQueueLayer\MessageQueueLayer.fsproj">
-      <Name>MessageQueueLayer.fsproj</Name>
+    <ProjectReference Include="..\MessageQueueServer\MessageQueueServer.fsproj">
+      <Name>MessageQueueServer.fsproj</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
       <Name>Shared.fsproj</Name>
     </ProjectReference>
-    <PackageReference Include="Serilog" Version="2.9.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00887" />
+    <ProjectReference Include="..\..\..\backend-crud\LoggingService\LoggingService.fsproj">
+      <Name>LoggingService.fsproj</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.fs" />
@@ -20,5 +21,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00887" />
   </ItemGroup>
 </Project>

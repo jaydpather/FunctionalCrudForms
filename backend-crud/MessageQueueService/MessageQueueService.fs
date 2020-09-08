@@ -1,4 +1,4 @@
-﻿namespace RebelSoftware.MessageQueueService
+﻿namespace RebelSoftware.MessageQueueService //todo: rename to RebelSoftware.MessageQueue
 
 open System
 open System.Text
@@ -8,7 +8,7 @@ open RabbitMQ.Client
 open RabbitMQ.Client.Events
 
 module MessageQueueing =
-    
+    //todo: rename to MessageQueueClient. (microservice provides MessageQueueServer)
     type MessageQueuer = {
         WriteMessageAndGetResponse : string -> string
     }

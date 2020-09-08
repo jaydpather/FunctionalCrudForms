@@ -11,7 +11,7 @@ module Logging =
 
     let private initializeLogging () = 
         Log.Logger <- LoggerConfiguration().MinimumLevel.Debug()
-                .WriteTo.File("logfile.log", rollingInterval = RollingInterval.Day)
+                .WriteTo.File("logfile.log", rollingInterval = RollingInterval.Day) //todo: caller needs to pass in name of log file, which they will get from config file
                 .CreateLogger()
 
     let private logException ex = 

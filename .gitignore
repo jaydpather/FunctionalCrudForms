@@ -26,9 +26,9 @@ microservices/EmployeeMicroservice-crud/EmployeeMicroservice/bin/
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/obj/
 microservices/EmployeeMicroservice-crud/EmployeeMicroservice/.ionide/
 
-microservices/EmployeeMicroservice-crud/MessageQueueLayer/bin/
-microservices/EmployeeMicroservice-crud/MessageQueueLayer/obj/
-microservices/EmployeeMicroservice-crud/MessageQueueLayer/.ionide/
+microservices/EmployeeMicroservice-crud/MessageQueueServer/bin/
+microservices/EmployeeMicroservice-crud/MessageQueueServer/obj/
+microservices/EmployeeMicroservice-crud/MessageQueueServer/.ionide/
 
 backend-crud/Backend/.ionide/
 backend-crud/Backend/bin/
