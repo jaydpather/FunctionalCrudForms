@@ -7,6 +7,9 @@
     <ProjectReference Include="..\MessageQueueServer\MessageQueueServer.fsproj">
       <Name>MessageQueueServer.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DocumentDbRepository\DocumentDbRepository.fsproj">
+      <Name>DocumentDbRepository.fsproj</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
       <Name>Shared.fsproj</Name>
     </ProjectReference>
@@ -18,7 +21,6 @@
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
     <PackageReference Include="Serilog" Version="2.9.0" />

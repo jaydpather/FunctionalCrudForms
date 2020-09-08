@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
+      <Name>Shared.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\backend-crud\MessageQueueService\LoggingService.fsproj">
+      <Name>LoggingService.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MongoDbRepository.fs" />
+    <Compile Include="DocumentDbRepository.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
+  </ItemGroup>
+</Project>

@@ -30,6 +30,10 @@ microservices/EmployeeMicroservice-crud/MessageQueueServer/bin/
 microservices/EmployeeMicroservice-crud/MessageQueueServer/obj/
 microservices/EmployeeMicroservice-crud/MessageQueueServer/.ionide/
 
+microservices/EmployeeMicroservice-crud/DocumentDbRepository/bin/
+microservices/EmployeeMicroservice-crud/DocumentDbRepository/obj/
+microservices/EmployeeMicroservice-crud/DocumentDbRepository/.ionide/
+
 backend-crud/Backend/.ionide/
 backend-crud/Backend/bin/
 backend-crud/Backend/obj/
