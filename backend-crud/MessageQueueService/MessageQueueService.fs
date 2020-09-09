@@ -38,7 +38,6 @@ module MessageQueueing =
         props.CorrelationId <- Guid.NewGuid().ToString()
         props.ReplyTo <- channel.QueueDeclare().QueueName
         consumer.Received.Add(onMessageReceived respQueue props.CorrelationId)
-        
         {
             connection = connection;
             channel = channel;
@@ -46,12 +45,10 @@ module MessageQueueing =
             respQueue = respQueue;
             props = props;
         }
-
     
     let private publishToMsgQueue (jsonString:string) rpcInfo = 
         let msgBytes = Encoding.UTF8.GetBytes(jsonString)
         rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes) //todo: routing key from config file
-
         rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.props.ReplyTo, autoAck=true)
 
     let private writeMessageAndGetResponse jsonString =
@@ -60,7 +57,14 @@ module MessageQueueing =
         rpcInfo
         |> publishToMsgQueue jsonString 
         |> ignore
-        rpcInfo.respQueue.Take() //todo: figure out how to handle a timeout here. (e.g., if microservice isn't running). currently, the front end just says "saving..." and hangs
+
+        let mutable mqResponse = String.Empty
+        match rpcInfo.respQueue.TryTake(&mqResponse, 30000) with //todo: timeout value from config file
+        | true -> mqResponse
+        | false -> 
+            sprintf "timeout while waiting for microservice response to RabbitMQ message '%s'" jsonString
+            |> Exception 
+            |> raise
 
     let createMessageQueuer () =
         { WriteMessageAndGetResponse = writeMessageAndGetResponse }
