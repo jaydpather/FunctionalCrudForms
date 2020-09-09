@@ -47,3 +47,6 @@ backend-crud/LoggingService/obj/
 
 backend-crud/MessageQueueService/bin/
 backend-crud/MessageQueueService/obj/
+
+backend-crud/SerializationService/bin/
+backend-crud/SerializationService/obj/

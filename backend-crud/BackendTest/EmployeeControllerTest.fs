@@ -11,6 +11,7 @@ open Validation
 open RebelSoftware.LoggingService.Logging
 open RebelSoftware.MessageQueueService.MessageQueueing
 open RebelSoftware.HttpService.Http
+open RebelSoftware.SerializationService.Serialization
 
 
 module ControllerTests =
@@ -32,6 +33,8 @@ module ControllerTests =
             let jsonString = JsonConvert.SerializeObject object
             jsonString
 
+        let _serializationService =  createSerializationService<Employee> ()       
+
         let mutable _httpResponses = Unchecked.defaultof<string list>
 
         let writeHttpResponse str =
@@ -48,8 +51,6 @@ module ControllerTests =
 
         let createHttpServer readRequestBodyFn =
             _httpServer <- {
-                DeserializeEmployeeFromJson = deserializeEmployeeFromJson;
-                SerializeToJson = serializeToJson;
                 WriteHttpResponse = writeHttpResponse;
                 ReadRequestBody = readRequestBodyFn;
             }
@@ -80,7 +81,7 @@ module ControllerTests =
                     ValidationResult = ValidationResults.Success 
                 } 
             }            
-            EmployeeController.create _logger _messageQueuer _httpServer mockValidator
+            EmployeeController.create _logger _messageQueuer _serializationService _httpServer mockValidator
             |> ignore
             Assert.AreEqual(1, _httpResponses.Length)
             Assert.True(_httpResponses.[0].Contains("response to")) //this means we got the response from the mock MQ service
@@ -97,7 +98,7 @@ module ControllerTests =
                 let mockValidator = { 
                     ValidateEmployee = fun employee -> opResult
                 }            
-                EmployeeController.create _logger _messageQueuer _httpServer mockValidator
+                EmployeeController.create _logger _messageQueuer _serializationService _httpServer mockValidator
                 |> ignore
                 
                 Assert.AreEqual(1, _httpResponses.Length)
@@ -119,7 +120,7 @@ module ControllerTests =
                     ValidationResult = ValidationResults.Success 
                 } 
             }            
-            EmployeeController.create _logger _messageQueuer _httpServer mockValidator
+            EmployeeController.create _logger _messageQueuer _serializationService _httpServer mockValidator
             |> ignore
             Assert.AreEqual(1, _logMessagesReceived.Length)
             Assert.AreEqual(1, _httpResponses.Length)
