@@ -6,15 +6,6 @@
     <Compile Include="MessageQueueServer.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
-      <Name>Shared.fsproj</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\backend-crud\MessageQueueService\LoggingService.fsproj">
-      <Name>LoggingService.fsproj</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\backend-crud\SerializationService\SerializationService.fsproj">
-      <Name>LoggingService.fsproj</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />

@@ -3,11 +3,8 @@
 open System.Text
 open RabbitMQ.Client
 
-open Model
-open RebelSoftware.SerializationService
-
 module MessageQueueServer =
-    let startMessageQueueListener (serializationService:Serialization.SerializationService<Employee>) onMessageReceived = 
+    let startMessageQueueListener (serializeToJsonFn:obj->string) onMessageReceived = 
         let factory = ConnectionFactory()
         factory.HostName <- "localhost"
         use connection = factory.CreateConnection()
@@ -35,7 +32,7 @@ module MessageQueueServer =
                 Encoding.UTF8.GetString(body)
                 |> onMessageReceived 
                 |> fun opResult -> opResult :> obj
-                |> serializationService.SerializeToJson //todo: if we just use a function pointer for the serializeToJson function, can we avoid referencing Model?
+                |> serializeToJsonFn //todo: if we just use a function pointer for the serializeToJson function, can we avoid referencing Model?
             let responseBytes = Encoding.UTF8.GetBytes(responseString)
             let addr = PublicationAddress(exchangeName = "", exchangeType = ExchangeType.Direct, routingKey = props.ReplyTo)
             channel.BasicPublish(addr = addr, basicProperties = replyProps, body = responseBytes)

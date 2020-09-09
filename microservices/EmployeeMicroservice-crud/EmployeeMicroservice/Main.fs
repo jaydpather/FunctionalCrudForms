@@ -23,9 +23,10 @@ let main argv =
         printfn "Employee microservice running"
         let repository = DocumentDb.createDocumentDbRepository ()
         let serializationService = Serialization.createSerializationService ()
+
         EmployeeMicroservice.insertEmployee logger repository
         |> onMessageReceived serializationService
-        |> MessageQueueServer.startMessageQueueListener serializationService
+        |> MessageQueueServer.startMessageQueueListener serializationService.SerializeToJson
         0
     with
     | ex -> 
