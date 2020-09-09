@@ -4,7 +4,6 @@ open System
 open System.Threading.Tasks
 
 open NUnit.Framework
-open Newtonsoft.Json
 
 open Model
 open Validation
@@ -22,16 +21,6 @@ module ControllerTests =
 
         let mutable _messageQueue = Unchecked.defaultof<string list>
         let mutable _messageQueuer = Unchecked.defaultof<MessageQueuer>
-
-        //this function was purposely dup'd from HttpServer. todo: place this in a base class for all tests
-        let deserializeEmployeeFromJson (jsonString:string) = 
-            let employee = JsonConvert.DeserializeObject<Employee>(jsonString)
-            employee
-
-        //this function was purposely dup'd from HttpServer. todo: place this in a base class for all tests
-        let serializeToJson object =
-            let jsonString = JsonConvert.SerializeObject object
-            jsonString
 
         let _serializationService =  createSerializationService<Employee> ()       
 
@@ -71,7 +60,10 @@ module ControllerTests =
             }
 
             _httpResponses <- []
-            fun () -> _defaultRequestBody |> serializeToJson
+            fun () -> 
+                _defaultRequestBody 
+                |> fun x -> x :> obj
+                |> _serializationService.SerializeToJson
             |> createHttpServer 
 
         [<Test>]
@@ -103,7 +95,7 @@ module ControllerTests =
                 
                 Assert.AreEqual(1, _httpResponses.Length)
                 Assert.False(_httpResponses.[0].Contains("response to")) //this means we did NOT get the response from the mock MQ service
-                Assert.AreEqual(opResult |> serializeToJson, _httpResponses.[0]) //controller should write the OperationResult (w/ ValidationResult property) to HTTP response
+                Assert.AreEqual(opResult :> obj |> _serializationService.SerializeToJson, _httpResponses.[0]) //controller should write the OperationResult (w/ ValidationResult property) to HTTP response
                 Assert.AreEqual(0, _logMessagesReceived.Length)
 
                 _httpResponses <- [] //prepare for next loop iteration
@@ -119,12 +111,15 @@ module ControllerTests =
                 ValidateEmployee = fun employee -> { 
                     ValidationResult = ValidationResults.Success 
                 } 
-            }            
+            }
+
+            let opResultSerializer = createSerializationService<OperationResult> ()
+
             EmployeeController.create _logger _messageQueuer _serializationService _httpServer mockValidator
             |> ignore
             Assert.AreEqual(1, _logMessagesReceived.Length)
             Assert.AreEqual(1, _httpResponses.Length)
             let expectedResponseObj = { ValidationResult = ValidationResults.UnknownError }
-            let actualResponseObj = JsonConvert.DeserializeObject<OperationResult>(_httpResponses.[0])
+            let actualResponseObj = opResultSerializer.DeserializeFromJson _httpResponses.[0]
             Assert.AreEqual(expectedResponseObj, actualResponseObj) //value equality, not physical equality
 
