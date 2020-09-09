@@ -22,9 +22,9 @@ let insertEmployee (logger:Logging.Logger) (documentDbRepository:DocumentDb.Docu
     operationResult
 
 let onMessageReceived (serializationService:Serialization.SerializationService<Employee>) insertEmployeeFn message = 
-    let employee = serializationService.DeserializeFromJson message
-    let opResult = insertEmployeeFn employee
-    opResult :> obj
+    serializationService.DeserializeFromJson message
+    |> insertEmployeeFn
+    |> fun opResult -> opResult :> obj
 
 
 [<EntryPoint>]
