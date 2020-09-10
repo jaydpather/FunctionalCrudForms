@@ -12,15 +12,16 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    async validateAndSubmit(self, postFn, successFn, catchFn) {
+    async validateAndSubmit(self, postToServerFn,) {
         let employee = { FirstName: self.state.firstName, LastName: self.state.lastName };
         let validator = getEmployeeValidator();
         let opResult = validator.ValidateEmployee(employee);
         
-        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        //if(true){ //temp: allow posting of blank names, to test server-side validation
+        //if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        if(true){ //temp: allow posting of blank names, to test server-side validation
             try{
-                let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
+                debugger;
+                let response = await postToServerFn(employee);
 
                 self.setValidationState(self, response.data.ValidationResult);
             }catch(ex){
@@ -40,13 +41,18 @@ export default class extends Component {
         });
     }
 
+    postToServer = async (employee) => {
+        let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
+        return response;
+    }
+
     //todo: remove this function from component
     submitForm = async(event) => {
         let self = this;
 
         this.setValidationState(self, ValidationResults$$$get_Saving());
 
-        this.validateAndSubmit(self, this.postToServer, this.onServerSuccess, this.onServerException);
+        this.validateAndSubmit(self, this.postToServer);
     }
 
     render () {
