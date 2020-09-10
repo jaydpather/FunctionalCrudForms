@@ -12,47 +12,41 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    self = this;
+    validateAndSubmit(self, postFn, successFn, catchFn) {
+        debugger;
+        let employee = { FirstName: self.state.firstName, LastName: self.state.lastName };
+        let validator = getEmployeeValidator();
+        let opResult = validator.ValidateEmployee(employee);
+        let retVal = opResult.ValidationResult;
+        
+        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        //if(true){ //temp: allow posting of blank names, to test server-side validation
+            axios.post("http://localhost:7000/employee/create", JSON.stringify(employee)).then(function (response){
+                self.setValidationState(self, response.data.ValidationResult);
+            }).catch(function (ex){
+                self.setValidationState(self, ValidationResults$$$get_UnknownError());
+            });
+        }
+        // else: client-side validation failed
+    }
+
+    setValidationState(self, newValidationState){
+        self.setState({
+            firstName: self.state.firstName,
+            lastName: self.state.lastName,
+            validationState: newValidationState
+        });
+    }
 
     //todo: remove this function from component
     submitForm = async(event) => {
-        //alert(JSON.stringify(ui));
-        var employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
-        var self = this;
-        var validator = getEmployeeValidator();
-        var opResult = validator.ValidateEmployee(employee)
-        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        //if(true){ //temp: allow posting of blank names, to test server-side validation
-            self.setState({
-                firstName: self.state.firstName,
-                lastName: self.state.lastName,
-                validationState: ValidationResults$$$get_Saving() //
-            });
-            axios.post("http://localhost:7000/employee/create", JSON.stringify(employee))
-            .then(function (response) {
-                //alert(JSON.stringify(response.data));
-                self.setState({
-                    firstName: self.state.firstName,
-                    lastName: self.state.lastName,
-                    validationState: response.data.ValidationResult
-                });
-            })
-            .catch(function(error){
-                //alert("error:" + error);
-                self.setState({
-                    firstName: self.state.firstName,
-                    lastName: self.state.lastName,
-                    validationState: ValidationResults$$$get_UnknownError()
-                });
-            })
-        }
-        else{
-            self.setState({
-                firstName: self.state.firstName,
-                lastName: self.state.lastName,
-                validationState: opResult.ValidationResult
-            });
-        }
+        let self = this;
+
+        this.setValidationState(self, ValidationResults$$$get_Saving());
+
+        let nextValidationState = this.validateAndSubmit(self, this.postToServer, this.onServerSuccess, this.onServerException);
+
+        this.setValidationState(self, nextValidationState);
     }
 
     render () {
