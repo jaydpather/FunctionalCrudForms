@@ -12,33 +12,21 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    async validateAndSubmit(self, postToServerFn,) {
-        let employee = { FirstName: self.state.firstName, LastName: self.state.lastName };
-        let validator = getEmployeeValidator();
-        let opResult = validator.ValidateEmployee(employee);
+    async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
+        let opResult = validationFn(employee);
         
-        //if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        if(true){ //temp: allow posting of blank names, to test server-side validation
+        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        //if(true){ //temp: allow posting of blank names, to test server-side validation
             try{
-                debugger;
                 let response = await postToServerFn(employee);
-
-                self.setValidationState(self, response.data.ValidationResult);
+                setValidationStateFn(response.data.ValidationResult);
             }catch(ex){
-                self.setValidationState(self, ValidationResults$$$get_UnknownError());
+                setValidationStateFn(ValidationResults$$$get_UnknownError());
             }
         }
         else{
-            self.setValidationState(self, opResult.ValidationResult);
+            setValidationStateFn(opResult.ValidationResult);
         }
-    }
-
-    setValidationState(self, newValidationState){
-        self.setState({
-            firstName: self.state.firstName,
-            lastName: self.state.lastName,
-            validationState: newValidationState
-        });
     }
 
     postToServer = async (employee) => {
@@ -48,11 +36,23 @@ export default class extends Component {
 
     //todo: remove this function from component
     submitForm = async(event) => {
-        let self = this;
+        let employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
 
-        this.setValidationState(self, ValidationResults$$$get_Saving());
+        let validator = getEmployeeValidator();
+        let validationFunction = (employee) => { 
+            return validator.ValidateEmployee(employee);
+        }
 
-        this.validateAndSubmit(self, this.postToServer);
+        let setValidationStateFunction = (newValidationState) => {
+            this.setState({
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                validationState: newValidationState
+            }); 
+        }
+
+        setValidationStateFunction(ValidationResults$$$get_Saving());
+        this.validateAndSubmit(employee, validationFunction, this.postToServer, setValidationStateFunction);
     }
 
     render () {
