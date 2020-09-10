@@ -12,22 +12,24 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    validateAndSubmit(self, postFn, successFn, catchFn) {
-        debugger;
+    async validateAndSubmit(self, postFn, successFn, catchFn) {
         let employee = { FirstName: self.state.firstName, LastName: self.state.lastName };
         let validator = getEmployeeValidator();
         let opResult = validator.ValidateEmployee(employee);
-        let retVal = opResult.ValidationResult;
         
         if(ValidationResults$$$get_Success() == opResult.ValidationResult){
         //if(true){ //temp: allow posting of blank names, to test server-side validation
-            axios.post("http://localhost:7000/employee/create", JSON.stringify(employee)).then(function (response){
+            try{
+                let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
+
                 self.setValidationState(self, response.data.ValidationResult);
-            }).catch(function (ex){
+            }catch(ex){
                 self.setValidationState(self, ValidationResults$$$get_UnknownError());
-            });
+            }
         }
-        // else: client-side validation failed
+        else{
+            self.setValidationState(self, opResult.ValidationResult);
+        }
     }
 
     setValidationState(self, newValidationState){
@@ -44,9 +46,7 @@ export default class extends Component {
 
         this.setValidationState(self, ValidationResults$$$get_Saving());
 
-        let nextValidationState = this.validateAndSubmit(self, this.postToServer, this.onServerSuccess, this.onServerException);
-
-        this.setValidationState(self, nextValidationState);
+        this.validateAndSubmit(self, this.postToServer, this.onServerSuccess, this.onServerException);
     }
 
     render () {
