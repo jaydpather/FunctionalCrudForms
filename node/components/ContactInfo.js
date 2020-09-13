@@ -12,47 +12,47 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    self = this;
+    async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
+        let opResult = validationFn(employee);
+        
+        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
+        //if(true){ //temp: allow posting of blank names, to test server-side validation
+            try{
+                let response = await postToServerFn(employee);
+                setValidationStateFn(response.data.ValidationResult);
+            }catch(ex){
+                setValidationStateFn(ValidationResults$$$get_UnknownError());
+            }
+        }
+        else{
+            setValidationStateFn(opResult.ValidationResult);
+        }
+    }
+
+    postToServer = async (employee) => {
+        let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
+        return response;
+    }
 
     //todo: remove this function from component
     submitForm = async(event) => {
-        //alert(JSON.stringify(ui));
-        var employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
-        var self = this;
-        var validator = getEmployeeValidator();
-        var opResult = validator.ValidateEmployee(employee)
-        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        //if(true){ //temp: allow posting of blank names, to test server-side validation
-            self.setState({
-                firstName: self.state.firstName,
-                lastName: self.state.lastName,
-                validationState: ValidationResults$$$get_Saving() //
-            });
-            axios.post("http://localhost:7000/employee/create", JSON.stringify(employee))
-            .then(function (response) {
-                //alert(JSON.stringify(response.data));
-                self.setState({
-                    firstName: self.state.firstName,
-                    lastName: self.state.lastName,
-                    validationState: response.data.ValidationResult
-                });
-            })
-            .catch(function(error){
-                //alert("error:" + error);
-                self.setState({
-                    firstName: self.state.firstName,
-                    lastName: self.state.lastName,
-                    validationState: ValidationResults$$$get_UnknownError()
-                });
-            })
+        let employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
+
+        let validator = getEmployeeValidator();
+        let validationFunction = (employee) => { 
+            return validator.ValidateEmployee(employee);
         }
-        else{
-            self.setState({
-                firstName: self.state.firstName,
-                lastName: self.state.lastName,
-                validationState: opResult.ValidationResult
-            });
+
+        let setValidationStateFunction = (newValidationState) => {
+            this.setState({
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                validationState: newValidationState
+            }); 
         }
+
+        setValidationStateFunction(ValidationResults$$$get_Saving());
+        this.validateAndSubmit(employee, validationFunction, this.postToServer, setValidationStateFunction);
     }
 
     render () {
