@@ -110,7 +110,7 @@ export default class extends Component {
                 />
                 <br />
                 <br />
-                <button type="button" onClick={this.submitForm}>Save</button>
+                <button type="button" onClick={this.props.employeeController.submitForm(this)}>Save</button>
                 <br />
                 <br />
                 {
