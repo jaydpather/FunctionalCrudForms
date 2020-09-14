@@ -12,6 +12,14 @@ export default class EmployeeController {
         this._postToServerFn = postToServerFn;
     }
 
+    getInitialState = () => {
+        return { 
+            firstName: "", 
+            lastName: "",
+            validationState: ValidationResults$$$get_New()
+        };
+    }
+
     submitForm = (componentThis) => async(event) => {
         let employee = { FirstName: componentThis.state.firstName, LastName: componentThis.state.lastName };
 

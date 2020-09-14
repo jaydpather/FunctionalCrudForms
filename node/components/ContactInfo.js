@@ -6,11 +6,7 @@ import { getEmployeeValidator } from '../fable-include/Validation'
 const axios = require('axios');
 
 export default class extends Component {
-    state = { 
-        firstName: "", 
-        lastName: "",
-        validationState: ValidationResults$$$get_New()
-    };
+    state = this.props.employeeController.getInitialState();
 
     render () {
         console.log("rendering") //todo: why do we see this log message on both server and console when doing SSR?
