@@ -3,13 +3,8 @@ import { Employee, ValidationResults$$$get_New, ValidationResults$$$get_Success,
 
 
 export default class EmployeeController {
-    constructor(validator, postToServerFn){
-        
-        this._validationFn = (employee) => { 
-            return validator.ValidateEmployee(employee);
-        }
-
-        this._postToServerFn = postToServerFn;
+    constructor(validateAndSubmitFn){
+        this._validateAndSubmitFn = validateAndSubmitFn;
     }
 
     getInitialState = () => {
@@ -32,24 +27,7 @@ export default class EmployeeController {
         }
 
         setValidationStateFn(ValidationResults$$$get_Saving());
-        this.validateAndSubmit(employee, this._validationFn, this._postToServerFn, setValidationStateFn);
-    }
-
-    async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
-        let opResult = validationFn(employee);
-        
-        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        //if(true){ //temp: allow posting of blank names, to test server-side validation
-            try{
-                let response = await postToServerFn(employee);
-                setValidationStateFn(response.data.ValidationResult);
-            }catch(ex){
-                setValidationStateFn(ValidationResults$$$get_UnknownError());
-            }
-        }
-        else{
-            setValidationStateFn(opResult.ValidationResult);
-        }
+        this._validateAndSubmitFn(employee, setValidationStateFn);
     }
 }
 

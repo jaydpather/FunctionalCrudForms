@@ -3,6 +3,7 @@ import Layout from '../../components/MyLayout';
 import ContactInfo from '../../components/ContactInfo';
 import EmployeeController from '../../controllers/EmployeeController';
 import { getEmployeeValidator } from '../../fable-include/Validation'
+import EmployeeLogicService from '../../logic/EmployeeLogicService';
 
 const axios = require('axios');
 
@@ -17,8 +18,10 @@ export default class extends Component {
   render () {
     //todo: consistent tab width
     let validator = getEmployeeValidator();
-    let employeeController = new EmployeeController(validator, this.postToServer);
-
+    let employeeLogicService = new EmployeeLogicService();
+    let validateAndSubmitFn = employeeLogicService.validateAndSubmit(validator.ValidateEmployee, this.postToServer);
+    let employeeController = new EmployeeController(validateAndSubmitFn);
+    
     return (
       <Layout>
         <ContactInfo employeeController = {employeeController} />
