@@ -12,49 +12,6 @@ export default class extends Component {
         validationState: ValidationResults$$$get_New()
     };
 
-    async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
-        let opResult = validationFn(employee);
-        
-        if(ValidationResults$$$get_Success() == opResult.ValidationResult){
-        //if(true){ //temp: allow posting of blank names, to test server-side validation
-            try{
-                let response = await postToServerFn(employee);
-                setValidationStateFn(response.data.ValidationResult);
-            }catch(ex){
-                setValidationStateFn(ValidationResults$$$get_UnknownError());
-            }
-        }
-        else{
-            setValidationStateFn(opResult.ValidationResult);
-        }
-    }
-
-    postToServer = async (employee) => {
-        let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
-        return response;
-    }
-
-    //todo: remove this function from component
-    submitForm = async(event) => {
-        let employee = { FirstName: this.state.firstName, LastName: this.state.lastName };
-
-        let validator = getEmployeeValidator();
-        let validationFunction = (employee) => { 
-            return validator.ValidateEmployee(employee);
-        }
-
-        let setValidationStateFunction = (newValidationState) => {
-            this.setState({
-                firstName: this.state.firstName,
-                lastName: this.state.lastName,
-                validationState: newValidationState
-            }); 
-        }
-
-        setValidationStateFunction(ValidationResults$$$get_Saving());
-        this.validateAndSubmit(employee, validationFunction, this.postToServer, setValidationStateFunction);
-    }
-
     render () {
         console.log("rendering") //todo: why do we see this log message on both server and console when doing SSR?
         const formStyle = {

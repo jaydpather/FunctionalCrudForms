@@ -8,6 +8,7 @@ const axios = require('axios');
 
 export default class extends Component {
 
+  //todo: make postToServer into a reusable method w/ a param for URL
   postToServer = async (employee) => {
     let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
     return response;

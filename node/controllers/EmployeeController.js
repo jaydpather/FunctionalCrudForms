@@ -24,7 +24,7 @@ export default class EmployeeController {
         }
 
         setValidationStateFn(ValidationResults$$$get_Saving());
-        componentThis.validateAndSubmit(employee, this._validationFn, this._postToServerFn, setValidationStateFn);
+        this.validateAndSubmit(employee, this._validationFn, this._postToServerFn, setValidationStateFn);
     }
 
     async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
