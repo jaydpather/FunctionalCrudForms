@@ -1,26 +1,21 @@
-const axios = require('axios');
-
-import { getEmployeeValidator } from '../fable-include/Validation'
-
 import { Employee, ValidationResults$$$get_New, ValidationResults$$$get_Success, ValidationResults$$$get_Saving, ValidationResults$$$get_UnknownError, ValidationResults$$$get_FirstNameBlank,
     ValidationResults$$$get_LastNameBlank } from '../fable-include/Model'
 
 
 export default class EmployeeController {
-    //_componentThis = null;
-    constructor(componentThis){
-        this._componentThis = componentThis;
+    constructor(validator, postToServerFn){
+        
+        this._validationFn = (employee) => { 
+            return validator.ValidateEmployee(employee);
+        }
+
+        this._postToServerFn = postToServerFn;
     }
 
     submitForm = (componentThis) => async(event) => {
         let employee = { FirstName: componentThis.state.firstName, LastName: componentThis.state.lastName };
 
-        let validator = getEmployeeValidator();
-        let validationFunction = (employee) => { 
-            return validator.ValidateEmployee(employee);
-        }
-
-        let setValidationStateFunction = (newValidationState) => {
+        let setValidationStateFn = (newValidationState) => {
             componentThis.setState({
                 firstName: componentThis.state.firstName,
                 lastName: componentThis.state.lastName,
@@ -28,8 +23,8 @@ export default class EmployeeController {
             }); 
         }
 
-        setValidationStateFunction(ValidationResults$$$get_Saving());
-        componentThis.validateAndSubmit(employee, validationFunction, this.postToServer, setValidationStateFunction);
+        setValidationStateFn(ValidationResults$$$get_Saving());
+        componentThis.validateAndSubmit(employee, this._validationFn, this._postToServerFn, setValidationStateFn);
     }
 
     async validateAndSubmit(employee, validationFn, postToServerFn, setValidationStateFn) {
@@ -47,11 +42,6 @@ export default class EmployeeController {
         else{
             setValidationStateFn(opResult.ValidationResult);
         }
-    }
-
-    postToServer = async (employee) => {
-        let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
-        return response;
     }
 }
 
