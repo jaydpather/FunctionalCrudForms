@@ -18,7 +18,7 @@ export default class EmployeeController {
     submitForm = (componentThis) => async(event) => {
         let employee = { FirstName: componentThis.state.firstName, LastName: componentThis.state.lastName };
 
-        let setValidationStateFn = (newValidationState) => {
+        let setValidationStateFn = (newValidationState) => { //todo_search: rename setValidationStateFn to handleResponseFromServer. The page needs to pass this function as a param. (each page will handle the response differently, and expect a different return type)
             componentThis.setState({
                 firstName: componentThis.state.firstName,
                 lastName: componentThis.state.lastName,
@@ -26,7 +26,7 @@ export default class EmployeeController {
             }); 
         }
 
-        setValidationStateFn(ValidationResults$$$get_Saving());
+        setValidationStateFn(ValidationResults$$$get_Saving()); //todo_search: this will be a different state the search operation. ("searcing...", or "loading...")
         this._validateAndSubmitFn(employee, setValidationStateFn);
     }
 }

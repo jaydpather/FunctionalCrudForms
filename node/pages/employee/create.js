@@ -11,7 +11,7 @@ export default class extends Component {
 
   //todo: make postToServer into a reusable method w/ a param for URL
   postToServer = async (employee) => {
-    let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee));
+    let response = await axios.post("http://localhost:7000/employee/create", JSON.stringify(employee)); //todo: configurable URL
     return response;
   }
 
@@ -19,7 +19,7 @@ export default class extends Component {
     //todo: consistent tab width
     let validator = getEmployeeValidator();
     let employeeLogicService = new EmployeeLogicService();
-    let validateAndSubmitFn = employeeLogicService.validateAndSubmit(validator.ValidateEmployee, this.postToServer);
+    let validateAndSubmitFn = employeeLogicService.validateAndSubmit_Create(validator.ValidateEmployee, this.postToServer);
     let employeeController = new EmployeeController(validateAndSubmitFn);
     
     return (
