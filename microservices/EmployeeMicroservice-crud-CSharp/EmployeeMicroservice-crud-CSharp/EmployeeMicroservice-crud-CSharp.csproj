@@ -18,9 +18,6 @@
     <ProjectReference Include="..\..\..\backend-crud\LoggingService\LoggingService.fsproj">
       <Name>LoggingService.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SerializationService\SerializationService.csproj">
-      <Name>SerializationService.csproj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\backend-crud\SerializationService\SerializationService.fsproj">
       <Name>SerializationService.fsproj</Name>
     </ProjectReference>
