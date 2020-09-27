@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace backend_crud_CSharp
+namespace RebelSoftware.HttpService
 {
     public interface IHttpService
     {

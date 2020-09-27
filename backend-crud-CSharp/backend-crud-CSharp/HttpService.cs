@@ -1,7 +1,7 @@
 using System.IO;
 using Microsoft.AspNetCore.Http;
 
-namespace backend_crud_CSharp
+namespace RebelSoftware.HttpService
 {
     internal class HttpService : IHttpService
     {

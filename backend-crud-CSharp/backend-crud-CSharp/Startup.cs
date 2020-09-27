@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using RebelSoftware.LoggingService;
 using RebelSoftware.MessageQueueService;
 using RebelSoftware.SerializationService;
-//using RebelSoftware.HttpService;
+using RebelSoftware.HttpService;
 
 namespace backend_crud_CSharp
 {
@@ -66,7 +66,7 @@ namespace backend_crud_CSharp
                 endpoints.MapPost("/employee/create", async context => 
                 {
                     var httpService = HttpServiceFactory.CreateHttpService(context);
-                    var controller = new EmployeeController();
+                    var controller = new EmployeeController(logger, messageQueuer, serializationService, httpService, employeeValidator);
 
                     await context.Response.WriteAsync("hello");
                 });
