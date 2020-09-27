@@ -16,6 +16,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "debug UTs",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-test",
+            "program": "${workspaceFolder}/EmployeeMicroservice-crud-CSharpTest/bin/Debug/netcoreapp3.1/EmployeeMicroservice-crud-CSharpTest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

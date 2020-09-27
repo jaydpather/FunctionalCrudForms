@@ -6,7 +6,10 @@ namespace EmployeeMicroservice_crud_CSharpTest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("debug UT entry point running");
+
+            var test = new EmployeeMicroserviceTest();
+            test.DummyTest();
         }
     }
 }
