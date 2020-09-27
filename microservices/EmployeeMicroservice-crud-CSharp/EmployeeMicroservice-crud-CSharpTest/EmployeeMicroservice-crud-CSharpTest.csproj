@@ -8,6 +8,11 @@
     <RootNamespace>EmployeeMicroservice_crud_CSharpTest</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp.csproj">
+      <Name>EmployeeMicroservice-crud-CSharp.csproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0-preview-20200812-03" />
