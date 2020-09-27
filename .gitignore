@@ -29,6 +29,9 @@ microservices/EmployeeMicroservice-crud/EmployeeMicroservice/.ionide/
 microservices/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp/bin/
 microservices/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp/obj/
 microservices/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp/.ionide/
+microservices/EmployeeMicroservice-crud-CSharp/SerializationService/bin/
+microservices/EmployeeMicroservice-crud-CSharp/SerializationService/obj/
+microservices/EmployeeMicroservice-crud-CSharp/SerializationService/.ionide/
 
 microservices/EmployeeMicroservice-crud/EmployeeMicroserviceTest/bin/
 microservices/EmployeeMicroservice-crud/EmployeeMicroserviceTest/obj/
