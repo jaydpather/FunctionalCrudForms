@@ -63,7 +63,13 @@ namespace backend_crud_CSharp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapPost("/employee/create", async context => {await context.Response.WriteAsync("hello");});
+                endpoints.MapPost("/employee/create", async context => 
+                {
+                    var httpService = HttpServiceFactory.CreateHttpService(context);
+                    var controller = new EmployeeController();
+
+                    await context.Response.WriteAsync("hello");
+                });
             });
         }
     }

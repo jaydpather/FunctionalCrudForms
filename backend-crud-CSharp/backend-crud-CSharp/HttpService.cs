@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace backend_crud_CSharp
 {
-    public class HttpService
+    internal class HttpService : IHttpService
     {
         private HttpContext _httpContext;
         public HttpService(HttpContext context)
