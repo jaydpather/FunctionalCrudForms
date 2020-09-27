@@ -22,5 +22,8 @@
       <Name>SerializationService.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="4.7.2" />
+  </ItemGroup>
 
 </Project>

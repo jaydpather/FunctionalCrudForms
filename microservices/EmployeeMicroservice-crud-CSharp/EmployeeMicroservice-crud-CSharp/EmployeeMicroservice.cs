@@ -12,7 +12,7 @@ namespace EmployeeMicroservice_crud_CSharp
         private Logging.Logger _logger;
         private DocumentDb.DocumentDbRepository _documentDbRepository;
 
-        EmployeeMicroservice(Logging.Logger logger, DocumentDb.DocumentDbRepository documentDbRepository)
+        public EmployeeMicroservice(Logging.Logger logger, DocumentDb.DocumentDbRepository documentDbRepository)
         {
             _logger = logger;
             _documentDbRepository = documentDbRepository;
