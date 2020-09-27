@@ -1,10 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>backend_crud_CSharp</RootNamespace>
   </PropertyGroup>
-
-
-
+  <ItemGroup>
+    <ProjectReference Include="../../Fable/Shared/Shared.fsproj">
+      <Name>Shared.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../Backend-crud/LoggingService/LoggingService.fsproj">
+      <Name>LoggingService.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Backend-crud\MessageQueueService\MessageQueueService.fsproj">
+      <Name>MessageQueueService.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Backend-crud\SerializationService\SerializationService.fsproj">
+      <Name>SerializationService.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

@@ -10,6 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using RebelSoftware.LoggingService;
+using RebelSoftware.MessageQueueService;
+using RebelSoftware.SerializationService;
+//using RebelSoftware.HttpService;
+
 namespace backend_crud_CSharp
 {
     public class Startup
@@ -30,6 +35,13 @@ namespace backend_crud_CSharp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //var logger = RebelSoftware.LoggingService.Logging.createLogger();
+            var logger = Logging.createLogger();
+            var messageQueuer = MessageQueueing.createMessageQueuer();
+            var serializationService = Serialization.createSerializationService<Model.Employee>();
+            var employeeValidator = Validation.getEmployeeValidator();
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
