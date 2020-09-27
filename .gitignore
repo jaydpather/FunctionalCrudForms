@@ -61,3 +61,8 @@ backend-crud/MessageQueueService/obj/
 
 backend-crud/SerializationService/bin/
 backend-crud/SerializationService/obj/
+
+backend-crud-CSharp/backend-crud-CSharp/.ionide/
+backend-crud-CSharp/backend-crud-CSharp/bin/
+backend-crud-CSharp/backend-crud-CSharp/obj/
+backend-crud-CSharp/backend-crud-CSharp/wwwroot/lib/
