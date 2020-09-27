@@ -13,7 +13,6 @@ namespace EmployeeMicroservice_crud_CSharp
             var logger = Logging.createLogger();
             try
             {
-                throw new Exception("test exception");
                 var documentDbRepository = DocumentDb.createDocumentDbRepository ();
                 var serializationService = Serialization.createSerializationService<Model.Employee>();
             }
