@@ -5,5 +5,22 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>EmployeeMicroservice_crud_CSharp</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EmployeeMicroservice-crud\MessageQueueServer\MessageQueueServer.fsproj">
+      <Name>MessageQueueServer.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EmployeeMicroservice-crud\DocumentDbRepository\DocumentDbRepository.fsproj">
+      <Name>DocumentDbRepository.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Fable\Shared\Shared.fsproj">
+      <Name>Shared.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\backend-crud\LoggingService\LoggingService.fsproj">
+      <Name>LoggingService.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\backend-crud\SerializationService\SerializationService.fsproj">
+      <Name>SerializationService.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
 
 </Project>

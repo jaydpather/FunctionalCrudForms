@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/EmployeeMicroservice-crud-CSharp.dll",
+            "program": "${workspaceFolder}/EmployeeMicroservice-crud-CSharp/bin/Debug/netcoreapp3.1/EmployeeMicroservice-crud-CSharp.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

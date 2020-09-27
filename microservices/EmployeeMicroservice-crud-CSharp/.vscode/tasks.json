@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp.csproj",
+                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp.csproj",
+                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp.csproj",
+                "${workspaceFolder}/EmployeeMicroservice-crud-CSharp/EmployeeMicroservice-crud-CSharp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
