@@ -7,6 +7,7 @@ using RebelSoftware.Logging;
 using RebelSoftware.MessageQueue;
 using RebelSoftware.Serialization;
 using RebelSoftware.HttpService;
+using RebelSoftware.EmployeeLogic;
 using backend_crud_CSharp;
 
 namespace backend_crud_CSharpTest
@@ -18,7 +19,7 @@ namespace backend_crud_CSharpTest
         private Mock<IMessageQueueService> _messageQueuer;
         private Mock<ISerializationService> _serializationService;
         private Mock<IHttpService> _httpService;
-        private Validation.EmployeeValidator _employeeValidator;
+        private Mock<IEmployeeLogicService> _employeeLogicService;
         private EmployeeController _employeeController;
 
         [SetUp]
@@ -28,23 +29,20 @@ namespace backend_crud_CSharpTest
             _messageQueuer = new Mock<IMessageQueueService>();
             _serializationService = new Mock<ISerializationService>();
             _httpService = new Mock<IHttpService>();
-            _employeeValidator = Validation.getEmployeeValidator();
-            // _employeeValidator.ValidateEmployee += (employee) => {
-            //     return new Model.OperationResult(Model.ValidationResults.Success);
-            // };
+            _employeeLogicService = new Mock<IEmployeeLogicService>();
 
-            _employeeController = new EmployeeController(_logger.Object, _messageQueuer.Object, _serializationService.Object, _httpService.Object, _employeeValidator);
+            _employeeController = new EmployeeController(_logger.Object, _messageQueuer.Object, _serializationService.Object, _httpService.Object, _employeeLogicService.Object);
         }
 
         [Test]
-        public void DummyTest()
+        public void Create_WritesResponseWhenNoExceptionThrown()
         {
-            
+            _employeeLogicService.Setup(x => x.ValidateEmployee(It.IsAny<Model.Employee>())).Returns(new Model.OperationResult(Model.ValidationResults.Success));
+
             _employeeController.Create();
-            //logger.Object.LogException(new Exception());
             
-            _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Once());
-            //Assert.IsTrue(true);
+            _httpService.Verify(h => h.WriteHttpResponse(It.IsAny<string>()), Times.Once());
+            _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never());
         }
     }
 }

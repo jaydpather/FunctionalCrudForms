@@ -8,7 +8,8 @@ namespace backend_crud_CSharpTest
         {
             Console.WriteLine("Custom UT entry point running...");
             var test = new EmployeeControllerTest();
-            test.DummyTest();
+            test.Setup();
+            test.Create_WritesResponseWhenNoExceptionThrown();
         }
     }
 }
