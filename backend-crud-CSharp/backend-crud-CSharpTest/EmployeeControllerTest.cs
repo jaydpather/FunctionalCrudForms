@@ -72,5 +72,17 @@ namespace backend_crud_CSharpTest
             }
 
         }
+
+        [Test]
+        public void Create_LogsMessageWhenExceptionThrown()
+        {
+            _employeeLogicService.Setup(x => x.ValidateEmployee(It.IsAny<Model.Employee>())).Throws(new Exception());
+
+            _employeeController.Create();
+            
+            _messageQueuer.Verify(m => m.WriteMessageAndGetResponse(It.IsAny<string>()), Times.Never());
+            _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Once());
+            _httpService.Verify(h => h.WriteHttpResponse(It.IsAny<string>()), Times.Once());
+        }
     }
 }
