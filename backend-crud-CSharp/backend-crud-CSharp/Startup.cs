@@ -30,6 +30,7 @@ namespace backend_crud_CSharp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,19 +45,24 @@ namespace backend_crud_CSharp
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                //app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            //app.UseHttpsRedirection();
+            //app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors(builder => builder.AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .SetIsOriginAllowed(origin => true)
+                              .AllowCredentials());
 
             app.UseAuthorization();
 
@@ -68,7 +74,8 @@ namespace backend_crud_CSharp
                     var httpService = HttpServiceFactory.CreateHttpService(context);
                     var controller = new EmployeeController(logger, messageQueuer, serializationService, httpService, employeeValidator);
 
-                    await context.Response.WriteAsync("hello");
+                    controller.Create();
+                    //await context.Response.WriteAsync("hello");
                 });
             });
         }
