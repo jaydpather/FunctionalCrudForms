@@ -25,6 +25,17 @@
             }
         },
         {
+            "name": "debug UTs",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-test",
+            "program": "${workspaceFolder}/backend-crud-CSharpTest/bin/Debug/netcoreapp3.1/backend-crud-CSharpTest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
