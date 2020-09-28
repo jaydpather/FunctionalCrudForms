@@ -78,3 +78,6 @@ backend-crud-CSharp/SerializationService/obj/
 
 backend-crud-CSharp/MessageQueueService/bin/
 backend-crud-CSharp/MessageQueueService/obj/
+
+backend-crud-CSharp/EmployeeLogicService/bin/
+backend-crud-CSharp/EmployeeLogicService/obj/
