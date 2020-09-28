@@ -13,8 +13,8 @@
     <ProjectReference Include="..\..\Backend-crud\MessageQueueService\MessageQueueService.fsproj">
       <Name>MessageQueueService.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Backend-crud\SerializationService\SerializationService.fsproj">
-      <Name>SerializationService.fsproj</Name>
+    <ProjectReference Include="..\SerializationService\SerializationService.csproj">
+      <Name>SerializationService.csproj</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

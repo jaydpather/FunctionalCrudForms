@@ -1,10 +1,10 @@
 using System;
 
 using RebelSoftware.MessageQueueService;
-using RebelSoftware.SerializationService;
 using RebelSoftware.HttpService;
 
 using RebelSoftware.Logging;
+using RebelSoftware.Serialization;
 
 namespace backend_crud_CSharp
 {
@@ -12,10 +12,10 @@ namespace backend_crud_CSharp
     {
         private ILoggingService _logger;
         private MessageQueueing.MessageQueuer _messageQueuer;
-        private Serialization.SerializationService<Model.Employee> _serializationService;
+        private ISerializationService _serializationService;
         private Validation.EmployeeValidator _employeeValidator;
         private IHttpService _httpService;
-        public EmployeeController(ILoggingService logger, MessageQueueing.MessageQueuer messageQueuer, Serialization.SerializationService<Model.Employee> serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
+        public EmployeeController(ILoggingService logger, MessageQueueing.MessageQueuer messageQueuer, ISerializationService serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
         {
             _logger = logger;
             _messageQueuer = messageQueuer;
@@ -34,8 +34,7 @@ namespace backend_crud_CSharp
             }
             else
             {
-                var objOperationResult = (object)operationResult;
-                retVal = _serializationService.SerializeToJson.Invoke(objOperationResult);
+                retVal = _serializationService.SerializeToJson<Model.OperationResult>(operationResult);
             }
             
             return retVal;
@@ -46,7 +45,7 @@ namespace backend_crud_CSharp
             try
             {
                 var requestJsonString = _httpService.ReadRequestBody();
-                var employee = _serializationService.DeserializeFromJson.Invoke(requestJsonString);
+                var employee = _serializationService.DeserializeFromJson<Model.Employee>(requestJsonString);
                 var operationResult =  _employeeValidator.ValidateEmployee.Invoke(employee);
                 var responseStr = GetResponseString(requestJsonString, operationResult);
                 _httpService.WriteHttpResponse(responseStr);
@@ -55,7 +54,7 @@ namespace backend_crud_CSharp
             {
                 _logger.LogException(ex);
                 var operationResult = new Model.OperationResult(Model.ValidationResults.UnknownError);
-                var responseStr = _serializationService.SerializeToJson.Invoke(operationResult);
+                var responseStr = _serializationService.SerializeToJson<Model.OperationResult>(operationResult);
                 _httpService.WriteHttpResponse(responseStr);
             }
         }

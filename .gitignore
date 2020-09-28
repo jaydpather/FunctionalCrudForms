@@ -69,3 +69,6 @@ backend-crud-CSharp/backend-crud-CSharp/wwwroot/lib/
 
 backend-crud-CSharp/LoggingService/bin/
 backend-crud-CSharp/LoggingService/obj/
+
+backend-crud-CSharp/SerializationService/bin/
+backend-crud-CSharp/SerializationService/obj/
