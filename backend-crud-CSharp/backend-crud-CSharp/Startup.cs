@@ -10,10 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using RebelSoftware.LoggingService;
 using RebelSoftware.MessageQueueService;
 using RebelSoftware.SerializationService;
 using RebelSoftware.HttpService;
+
+using RebelSoftware.Logging;
 
 namespace backend_crud_CSharp
 {
@@ -37,7 +38,7 @@ namespace backend_crud_CSharp
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //var logger = RebelSoftware.LoggingService.Logging.createLogger();
-            var logger = Logging.createLogger();
+            var logger = LoggingServiceFactory.CreateLoggingService();
             var messageQueuer = MessageQueueing.createMessageQueuer();
             var serializationService = Serialization.createSerializationService<Model.Employee>();
             var employeeValidator = Validation.getEmployeeValidator();

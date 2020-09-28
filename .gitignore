@@ -66,3 +66,6 @@ backend-crud-CSharp/backend-crud-CSharp/.ionide/
 backend-crud-CSharp/backend-crud-CSharp/bin/
 backend-crud-CSharp/backend-crud-CSharp/obj/
 backend-crud-CSharp/backend-crud-CSharp/wwwroot/lib/
+
+backend-crud-CSharp/LoggingService/bin/
+backend-crud-CSharp/LoggingService/obj/

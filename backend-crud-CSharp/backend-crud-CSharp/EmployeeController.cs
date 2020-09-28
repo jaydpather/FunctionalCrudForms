@@ -1,20 +1,21 @@
 using System;
 
-using RebelSoftware.LoggingService;
 using RebelSoftware.MessageQueueService;
 using RebelSoftware.SerializationService;
 using RebelSoftware.HttpService;
+
+using RebelSoftware.Logging;
 
 namespace backend_crud_CSharp
 {
     public class EmployeeController
     {
-        private Logging.Logger _logger;
+        private ILoggingService _logger;
         private MessageQueueing.MessageQueuer _messageQueuer;
         private Serialization.SerializationService<Model.Employee> _serializationService;
         private Validation.EmployeeValidator _employeeValidator;
         private IHttpService _httpService;
-        public EmployeeController(Logging.Logger logger, MessageQueueing.MessageQueuer messageQueuer, Serialization.SerializationService<Model.Employee> serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
+        public EmployeeController(ILoggingService logger, MessageQueueing.MessageQueuer messageQueuer, Serialization.SerializationService<Model.Employee> serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
         {
             _logger = logger;
             _messageQueuer = messageQueuer;
@@ -52,7 +53,7 @@ namespace backend_crud_CSharp
             }
             catch(Exception ex)
             {
-                _logger.LogException.Invoke(ex);
+                _logger.LogException(ex);
                 var operationResult = new Model.OperationResult(Model.ValidationResults.UnknownError);
                 var responseStr = _serializationService.SerializeToJson.Invoke(operationResult);
                 _httpService.WriteHttpResponse(responseStr);
