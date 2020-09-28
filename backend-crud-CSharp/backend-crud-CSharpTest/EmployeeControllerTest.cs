@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 using Moq;
@@ -25,13 +26,18 @@ namespace backend_crud_CSharpTest
         [SetUp]
         public void Setup()
         {
+            InstantiateMocks();
+
+            _employeeController = new EmployeeController(_logger.Object, _messageQueuer.Object, _serializationService.Object, _httpService.Object, _employeeLogicService.Object);
+        }
+
+        private void InstantiateMocks()
+        {
             _logger = new Mock<ILoggingService>();
             _messageQueuer = new Mock<IMessageQueueService>();
             _serializationService = new Mock<ISerializationService>();
             _httpService = new Mock<IHttpService>();
             _employeeLogicService = new Mock<IEmployeeLogicService>();
-
-            _employeeController = new EmployeeController(_logger.Object, _messageQueuer.Object, _serializationService.Object, _httpService.Object, _employeeLogicService.Object);
         }
 
         [Test]
@@ -41,9 +47,30 @@ namespace backend_crud_CSharpTest
 
             _employeeController.Create();
             
-            _messageQueuer.Verify(m => m.WriteMessageAndGetResponse(It.IsAny<string>()));
+            _messageQueuer.Verify(m => m.WriteMessageAndGetResponse(It.IsAny<string>()), Times.Once());
             _httpService.Verify(h => h.WriteHttpResponse(It.IsAny<string>()), Times.Once());
             _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never());
+        }
+
+        [Test]
+        public void Create_DoesNotCallMQWhenEmployeeIsInvalid()
+        {
+            var failureResults = new int[]{ Model.ValidationResults.FirstNameBlank, Model.ValidationResults.LastNameBlank, Model.ValidationResults.UnknownError};
+
+            foreach(var curFailureResult in failureResults)
+            {
+                InstantiateMocks(); //need to redo this so that our calls to Verify will work. (without this line, we'll count call from previous loop iterations)
+                _employeeLogicService = new Mock<IEmployeeLogicService>();
+                _employeeLogicService.Setup(x => x.ValidateEmployee(It.IsAny<Model.Employee>())).Returns(new Model.OperationResult(curFailureResult));
+                _employeeController = new EmployeeController(_logger.Object, _messageQueuer.Object, _serializationService.Object, _httpService.Object, _employeeLogicService.Object);
+
+                _employeeController.Create();
+
+                _messageQueuer.Verify(m => m.WriteMessageAndGetResponse(It.IsAny<string>()), Times.Never());
+                _httpService.Verify(h => h.WriteHttpResponse(It.IsAny<string>()), Times.Once());
+                _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never());
+            }
+
         }
     }
 }

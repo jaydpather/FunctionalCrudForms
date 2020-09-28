@@ -9,7 +9,7 @@ namespace backend_crud_CSharpTest
             Console.WriteLine("Custom UT entry point running...");
             var test = new EmployeeControllerTest();
             test.Setup();
-            test.Create_CallsMQWhenEmployeeIsValid();
+            test.Create_DoesNotCallMQWhenEmployeeIsInvalid();
         }
     }
 }
