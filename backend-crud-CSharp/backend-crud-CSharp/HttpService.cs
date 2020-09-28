@@ -13,7 +13,6 @@ namespace RebelSoftware.HttpService
 
         public async void WriteHttpResponse(string response)
         {
-            //_httpContext.Response.Headers["Access-Control-Allow-Origin"] = "*";
             _httpContext.Response.Headers["Access-Control-Allow-Origin"] = new string[] {"*"}; //Microsoft.Extensions.Primitives.StringValues("*");
             await _httpContext.Response.WriteAsync(response);
         }

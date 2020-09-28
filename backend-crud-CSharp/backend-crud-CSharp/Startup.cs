@@ -45,15 +45,16 @@ namespace backend_crud_CSharp
 
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                //app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                //app.UseHsts();
+                app.UseHsts();
             }
 
+            //if you uncomment these lines, you will get an error message containing  "No 'Access-Control-Allow-Origin' header is present on the requested resource."  on the front end. (VSCode debug console for node app)
             //app.UseHttpsRedirection();
             //app.UseStaticFiles();
 
@@ -75,7 +76,6 @@ namespace backend_crud_CSharp
                     var controller = new EmployeeController(logger, messageQueuer, serializationService, httpService, employeeValidator);
 
                     controller.Create();
-                    //await context.Response.WriteAsync("hello");
                 });
             });
         }
