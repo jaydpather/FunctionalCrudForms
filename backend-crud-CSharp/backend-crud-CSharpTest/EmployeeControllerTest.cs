@@ -35,12 +35,13 @@ namespace backend_crud_CSharpTest
         }
 
         [Test]
-        public void Create_WritesResponseWhenNoExceptionThrown()
+        public void Create_CallsMQWhenEmployeeIsValid()
         {
             _employeeLogicService.Setup(x => x.ValidateEmployee(It.IsAny<Model.Employee>())).Returns(new Model.OperationResult(Model.ValidationResults.Success));
 
             _employeeController.Create();
             
+            _messageQueuer.Verify(m => m.WriteMessageAndGetResponse(It.IsAny<string>()));
             _httpService.Verify(h => h.WriteHttpResponse(It.IsAny<string>()), Times.Once());
             _logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never());
         }
