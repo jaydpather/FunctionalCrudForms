@@ -67,6 +67,9 @@ backend-crud-CSharp/backend-crud-CSharp/bin/
 backend-crud-CSharp/backend-crud-CSharp/obj/
 backend-crud-CSharp/backend-crud-CSharp/wwwroot/lib/
 
+backend-crud-CSharp/backend-crud-CSharpTest/bin/
+backend-crud-CSharp/backend-crud-CSharpTest/obj/
+
 backend-crud-CSharp/LoggingService/bin/
 backend-crud-CSharp/LoggingService/obj/
 
@@ -75,3 +78,6 @@ backend-crud-CSharp/SerializationService/obj/
 
 backend-crud-CSharp/MessageQueueService/bin/
 backend-crud-CSharp/MessageQueueService/obj/
+
+backend-crud-CSharp/EmployeeLogicService/bin/
+backend-crud-CSharp/EmployeeLogicService/obj/

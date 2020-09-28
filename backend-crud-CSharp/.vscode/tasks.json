@@ -13,6 +13,19 @@
             ],
             "problemMatcher": "$msCompile"
         },
+        
+        {
+            "label": "build-test",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/backend-crud-CSharpTest/backend-crud-CSharpTest.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
         {
             "label": "publish",
             "command": "dotnet",

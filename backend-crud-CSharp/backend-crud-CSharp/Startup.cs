@@ -14,6 +14,7 @@ using RebelSoftware.HttpService;
 using RebelSoftware.Logging;
 using RebelSoftware.Serialization;
 using RebelSoftware.MessageQueue;
+using RebelSoftware.EmployeeLogic;
 
 namespace backend_crud_CSharp
 {
@@ -40,7 +41,7 @@ namespace backend_crud_CSharp
             var logger = LoggingServiceFactory.CreateLoggingService();
             var messageQueuer = MessageQueueServiceFactory.CreateMessageQueueService();
             var serializationService = SerializationServiceFactory.CreateJsonSerializationService();
-            var employeeValidator = Validation.getEmployeeValidator();
+            var employeeLogicService = EmployeeLogicServiceFactory.CreateEmployeeLogicService();
 
 
             if (env.IsDevelopment())
@@ -73,7 +74,7 @@ namespace backend_crud_CSharp
                 endpoints.MapPost("/employee/create", async context => 
                 {
                     var httpService = HttpServiceFactory.CreateHttpService(context);
-                    var controller = new EmployeeController(logger, messageQueuer, serializationService, httpService, employeeValidator);
+                    var controller = new EmployeeController(logger, messageQueuer, serializationService, httpService, employeeLogicService);
 
                     controller.Create();
                 });

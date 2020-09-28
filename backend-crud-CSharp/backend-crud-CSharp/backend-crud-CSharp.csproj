@@ -16,5 +16,8 @@
     <ProjectReference Include="..\SerializationService\SerializationService.csproj">
       <Name>SerializationService.csproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EmployeeLogicService\EmployeeLogicService.csproj">
+      <Name>EmployeeLogicService.csproj</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
