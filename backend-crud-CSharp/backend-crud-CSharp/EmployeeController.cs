@@ -1,24 +1,23 @@
 using System;
 
-using RebelSoftware.MessageQueueService;
 using RebelSoftware.HttpService;
-
 using RebelSoftware.Logging;
 using RebelSoftware.Serialization;
+using RebelSoftware.MessageQueue;
 
 namespace backend_crud_CSharp
 {
     public class EmployeeController
     {
         private ILoggingService _logger;
-        private MessageQueueing.MessageQueuer _messageQueuer;
+        private IMessageQueueService _messageQueueService;
         private ISerializationService _serializationService;
         private Validation.EmployeeValidator _employeeValidator;
         private IHttpService _httpService;
-        public EmployeeController(ILoggingService logger, MessageQueueing.MessageQueuer messageQueuer, ISerializationService serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
+        public EmployeeController(ILoggingService logger, IMessageQueueService messageQueueService, ISerializationService serializationService, IHttpService httpService, Validation.EmployeeValidator employeeValidator)
         {
             _logger = logger;
-            _messageQueuer = messageQueuer;
+            _messageQueueService = messageQueueService;
             _serializationService = serializationService;
             _employeeValidator = employeeValidator;
             _httpService = httpService;
@@ -30,7 +29,7 @@ namespace backend_crud_CSharp
 
             if(operationResult.ValidationResult == Model.ValidationResults.Success)
             {
-                retVal = _messageQueuer.WriteMessageAndGetResponse.Invoke(requestJsonString);
+                retVal = _messageQueueService.WriteMessageAndGetResponse(requestJsonString);
             }
             else
             {

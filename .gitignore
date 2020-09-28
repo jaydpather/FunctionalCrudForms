@@ -72,3 +72,6 @@ backend-crud-CSharp/LoggingService/obj/
 
 backend-crud-CSharp/SerializationService/bin/
 backend-crud-CSharp/SerializationService/obj/
+
+backend-crud-CSharp/MessageQueueService/bin/
+backend-crud-CSharp/MessageQueueService/obj/
