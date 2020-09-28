@@ -7,14 +7,14 @@
     <ProjectReference Include="../../Fable/Shared/Shared.fsproj">
       <Name>Shared.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="../../Backend-crud/LoggingService/LoggingService.fsproj">
-      <Name>LoggingService.fsproj</Name>
+    <ProjectReference Include="../LoggingService/LoggingService.csproj">
+      <Name>LoggingService.csproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Backend-crud\MessageQueueService\MessageQueueService.fsproj">
-      <Name>MessageQueueService.fsproj</Name>
+    <ProjectReference Include="..\MessageQueueService\MessageQueueService.csproj">
+      <Name>MessageQueueService.csproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Backend-crud\SerializationService\SerializationService.fsproj">
-      <Name>SerializationService.fsproj</Name>
+    <ProjectReference Include="..\SerializationService\SerializationService.csproj">
+      <Name>SerializationService.csproj</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
