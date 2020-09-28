@@ -1,5 +1,9 @@
 using System;
+
 using NUnit.Framework;
+using Moq;
+
+using RebelSoftware.Logging;
 
 namespace backend_crud_CSharpTest
 {
@@ -9,7 +13,12 @@ namespace backend_crud_CSharpTest
         [Test]
         public void DummyTest()
         {
-            Assert.IsTrue(true);
+            var logger = new Mock<ILoggingService>();
+
+            logger.Object.LogException(new Exception());
+            
+            logger.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Once());
+            //Assert.IsTrue(true);
         }
     }
 }
