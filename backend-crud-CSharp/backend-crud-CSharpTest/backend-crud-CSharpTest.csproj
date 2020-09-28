@@ -8,11 +8,20 @@
     <RootNamespace>backend_crud_CSharpTest</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../Fable/Shared/Shared.fsproj">
+      <Name>Shared.fsproj</Name>
+    </ProjectReference>
     <ProjectReference Include="../backend-crud-CSharp/backend-crud-CSharp.csproj">
       <Name>backend-crud-CSharp.csproj</Name>
     </ProjectReference>
     <ProjectReference Include="../LoggingService/LoggingService.csproj">
       <Name>LoggingService.csproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../MessageQueueService/MessageQueueService.csproj">
+      <Name>MessageQueueService.csproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../SerializationService/SerializationService.csproj">
+      <Name>SerializationService.csproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
