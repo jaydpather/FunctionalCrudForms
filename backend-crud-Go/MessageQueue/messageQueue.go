@@ -4,13 +4,15 @@ import (
 	"log"
 
 	"github.com/streadway/amqp"
+	"github.com/google/uuid"
 )
 
 type RpcInfo struct {
 	Connection 		*amqp.Connection
 	AmqpChannel		*amqp.Channel
 	Queue			amqp.Queue
-	SendChannel		<-chan amqp.Delivery
+	ResponseChannel	<-chan amqp.Delivery
+	CorrelationId   string
 }
 
 func failOnError(err error, msg string) {
@@ -19,18 +21,16 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func CreateRpcInfo() {
+func CreateRpcInfo() *RpcInfo {
 	rpcInfo := new(RpcInfo)
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	rpcInfo.Connection = conn
-	defer conn.Close()
 
 	ch, err := rpcInfo.Connection.Channel()
 	failOnError(err, "Failed to open a channel")
 	rpcInfo.AmqpChannel = ch
-	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
 		"",    // name
@@ -43,7 +43,7 @@ func CreateRpcInfo() {
 	failOnError(err, "Failed to declare a queue")
 	rpcInfo.Queue = q
 
-	sendChannel, err := ch.Consume(
+	responseChannel, err := ch.Consume(
 		q.Name, // queue
 		"",     // consumer
 		true,   // auto-ack
@@ -53,5 +53,24 @@ func CreateRpcInfo() {
 		nil,    // args
 	)
 	failOnError(err, "Failed to register a consumer")
-	rpcInfo.SendChannel = sendChannel
+	rpcInfo.ResponseChannel = responseChannel
+
+	guid := uuid.New()
+	rpcInfo.CorrelationId = guid.String()
+
+	return rpcInfo
+}
+
+func PublishMessage(rpcInfo *RpcInfo, msg string) error {
+	return rpcInfo.AmqpChannel.Publish(
+		"",          // exchange
+		"employee", // routing key
+		false,       // mandatory
+		false,       // immediate
+		amqp.Publishing {
+			ContentType:   "text/plain",
+			CorrelationId: rpcInfo.CorrelationId,
+			ReplyTo:       rpcInfo.Queue.Name,
+			Body:          []byte(msg),
+		})
 }
