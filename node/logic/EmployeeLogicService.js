@@ -9,11 +9,9 @@ export default class EmployeeLogicService {
             if(ValidationResults$$$get_Success() == opResult.ValidationResult){
             //if(true){ //temp: allow posting of blank names, to test server-side validation
                 try{
-                    //debugger;
                     let response = await postToServerFn(employee);
                     setValidationStateFn(response.data.ValidationResult);
                 }catch(ex){
-                    //alert(JSON.stringify(ex));
                     setValidationStateFn(ValidationResults$$$get_UnknownError());
                 }
             }
