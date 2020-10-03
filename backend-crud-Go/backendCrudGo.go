@@ -1,11 +1,16 @@
 package main 
 
 import (
-	"net/http"
+	"net/http" 
+
+	"./MessageQueue"
+
 	"github.com/rs/cors"
 )
 
 func employeeCreate(w http.ResponseWriter, r *http.Request) {
+	messageQueue.CreateRpcInfo()
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("{ \"ValidationResult\": 0 }"))
 }
