@@ -20,6 +20,14 @@ func employeeCreate(w http.ResponseWriter, r *http.Request) {
 	defer rpcInfo.Connection.Close()
 	defer rpcInfo.AmqpChannel.Close()
 
+	//GOOGLE: GO unit tests and injectability
+	//	* EXAMPLE PROJECT: install GoMock, MockGen, run MockGen
+	//create employee struct
+	//GOOGLE: Go convert to JSON
+	//	* EXAMPLE PROJECT
+	//port validation function to Go
+	//don't write to MQ unless valid
+	//if invalid: return error response
 	err := messageQueue.PublishMessage(rpcInfo, "{ \"FirstName\": \"Will\", \"LastName\":\"Smith\" }")
 	failOnError(err, "failed to publish message")	
 	
