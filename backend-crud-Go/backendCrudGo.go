@@ -1,24 +1,44 @@
 package main 
 
 import (
-	"fmt"
 	"log"
-	"net/http"
-	//"./getString"
+	"net/http" 
+
+	"./MessageQueue"
+
+	"github.com/rs/cors"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "this is the response")
+func failOnError(err error, msg string) {
+	if err != nil {
+			log.Fatalf("%s: %s", msg, err)
+	}
 }
 
-//todo: 
-//	* listen on same port as existing back end
-//	* map URL of back end onto handler func
-//  * write hardcoded response (success message)
+func employeeCreate(w http.ResponseWriter, r *http.Request) {
+	rpcInfo := messageQueue.CreateRpcInfo()
+	defer rpcInfo.Connection.Close()
+	defer rpcInfo.AmqpChannel.Close()
+
+	err := messageQueue.PublishMessage(rpcInfo, "{ \"FirstName\": \"Will\", \"LastName\":\"Smith\" }")
+	failOnError(err, "failed to publish message")	
+	
+	responseStr := "{ \"ValidationResult\": -1 }"
+	for response:= range rpcInfo.ResponseChannel{
+		if(response.CorrelationId == rpcInfo.CorrelationId){
+			responseStr = string(response.Body)
+			break
+		}
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(responseStr))
+}
 
 func main(){
-	//fmt.Println("Hello, World!")
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
-	//fmt.Println(getString.GetHelloMessage())
+	mux := http.NewServeMux()
+    mux.HandleFunc("/employee/create", employeeCreate)
+
+    handler := cors.Default().Handler(mux)
+    http.ListenAndServe(":7000", handler)
 }
