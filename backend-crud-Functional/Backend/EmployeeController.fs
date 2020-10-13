@@ -10,8 +10,9 @@ open Validation
 
 open RebelSoftware.LoggingService
 open RebelSoftware.MessageQueueService
-open RebelSoftware.SerializationService
-open RebelSoftware.HttpService.Http
+open RebelSoftware.Serialization
+open RebelSoftware.HttpService
+open RebelSoftware.Logic
 
 //use this function to return a success value without microservices running
 let create_dummy (httpContext:HttpContext) = 
@@ -19,35 +20,44 @@ let create_dummy (httpContext:HttpContext) =
     httpContext.Response.WriteAsync("{Status:'Success'}")
 
 
+let handleException httpCtx ex = 
+    try
+        Logging.logException ex |> ignore //logging could fail due to full hard drive, or something
+    finally    
+        ()
+    { ValidationResult = ValidationResults.UnknownError }
 
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 //todo: shared logging layer between backend and microservices?
-let create (logger:Logging.Logger) (messageQueuer:MessageQueueing.MessageQueuer) (serializationService:Serialization.SerializationService<Employee>) (httpServer:HttpServer) (employeeValidator:EmployeeValidator) =
-    let getResponseStr requestJsonString opResult = 
-        match opResult.ValidationResult = ValidationResults.Success with 
-            | true ->
-                messageQueuer.WriteMessageAndGetResponse requestJsonString
-            | false -> 
-                opResult :> obj
-                |> serializationService.SerializeToJson
-
+let create httpCtx =
     try
-        //UNIT TEST: 
-        //  * when body contains valid Employee object, we write the response from the message queue. 
-        //  * when body contains validation errors, we write the OperationResult w/ expected validation errors to the response 
-        //  * when body contains invalid JSON, we write an OperationResult w/ UnknownError to the response, and call logger.LogException
-        let requestJsonString = httpServer.ReadRequestBody ()
-        requestJsonString
-        |> serializationService.DeserializeFromJson
-        |> employeeValidator.ValidateEmployee
-        |> (getResponseStr requestJsonString)
-        |> httpServer.WriteHttpResponse
+        let output = 
+            Http.readRequestBody httpCtx
+            |> Json.deserialize
+            |> Employee.insert
+        match output with 
+        | Output.MqWaitResponse(object) -> 
+            object 
+            |> Json.serialize
+            |> MessageQueueing.writeMessageAndGetResponse
+            |> Http.writeHttpResponse httpCtx
+        | Output.JsonResponse(object) ->
+            object
+            |> Json.serialize        
+            |> Http.writeHttpResponse httpCtx
+        | Output.LogFatalError(ex) -> //todo: test this case
+            ex
+            |> handleException
+            |> Json.serialize
+            |> Http.writeHttpResponse httpCtx
+        | Output.MqOutput(object) -> 
+            System.NotImplementedException ()
+            |> raise 
     with
     | ex -> 
-        logger.LogException ex |> ignore
-        { ValidationResult = ValidationResults.UnknownError }
-        |> JsonConvert.SerializeObject
-        |> httpServer.WriteHttpResponse 
+        handleException httpCtx ex
+        |> Json.serialize
+        |> Http.writeHttpResponse httpCtx
 
     

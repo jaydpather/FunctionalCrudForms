@@ -7,12 +7,7 @@ open Newtonsoft.Json
 open Model
 
 module Http =
-    type HttpServer = {
-        WriteHttpResponse : string -> System.Threading.Tasks.Task;
-        ReadRequestBody : unit -> string;
-    }
-
-    let private readRequestBody (httpContext:HttpContext) = 
+    let readRequestBody (httpContext:HttpContext) = 
         (*
             * todo: confirm with a load test whether bodyTask.GetAwaiter() is more or less scalable than bodyTask.Wait() 
               * internet's advice: bodyTask.GetAwaiter is more scalable b/c it frees up the current thread to do other stuff
@@ -29,12 +24,6 @@ module Http =
         let body = bodyTask.Result
         body
 
-    let private writeHttpResponse (httpContext:HttpContext) responseString = 
+    let writeHttpResponse (httpContext:HttpContext) responseString = 
         httpContext.Response.Headers.["Access-Control-Allow-Origin"] <- Microsoft.Extensions.Primitives.StringValues("*")
         httpContext.Response.WriteAsync(responseString)    
-
-    let createHttpServer (httpContext:HttpContext) = 
-        { 
-            WriteHttpResponse = fun responseStr -> writeHttpResponse httpContext responseStr;
-            ReadRequestBody = fun () -> readRequestBody httpContext;
-        }

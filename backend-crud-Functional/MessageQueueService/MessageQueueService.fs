@@ -8,11 +8,6 @@ open RabbitMQ.Client
 open RabbitMQ.Client.Events
 
 module MessageQueueing =
-    //todo: rename to MessageQueueClient. (microservice provides MessageQueueServer)
-    type MessageQueuer = {
-        WriteMessageAndGetResponse : string -> string
-    }
-    
     type private RPCInfo = {
         //todo: capitalize member names
         connection : IConnection;
@@ -51,7 +46,7 @@ module MessageQueueing =
         rpcInfo.channel.BasicPublish(exchange=String.Empty, routingKey="employee", basicProperties=rpcInfo.props, body=msgBytes) //todo: routing key from config file
         rpcInfo.channel.BasicConsume(consumer = rpcInfo.consumer, queue=rpcInfo.props.ReplyTo, autoAck=true)
 
-    let private writeMessageAndGetResponse jsonString =
+    let writeMessageAndGetResponse jsonString =
         
         let rpcInfo = createRpcInfoObject () //todo 1: create MQ Layer, startup injects function pointer
         rpcInfo
@@ -65,6 +60,3 @@ module MessageQueueing =
             sprintf "timeout while waiting for microservice response to RabbitMQ message '%s'" jsonString
             |> Exception 
             |> raise
-
-    let createMessageQueuer () =
-        { WriteMessageAndGetResponse = writeMessageAndGetResponse }

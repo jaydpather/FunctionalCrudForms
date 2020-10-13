@@ -6,6 +6,9 @@
     <ProjectReference Include="../../Fable/Shared/Shared.fsproj">
       <Name>Shared.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logic\Logic.fsproj">
+      <Name>Logic.fsproj</Name>
+    </ProjectReference>
     <ProjectReference Include="../LoggingService/LoggingService.fsproj">
       <Name>LoggingService.fsproj</Name>
     </ProjectReference>

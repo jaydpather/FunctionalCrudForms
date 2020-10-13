@@ -66,9 +66,9 @@ backend-crud-Functional/Backend/.ionide/
 backend-crud-Functional/Backend/bin/
 backend-crud-Functional/Backend/obj/
 
-backend-crud-Functional/BackendTest/.ionide/
-backend-crud-Functional/BackendTest/bin/
-backend-crud-Functional/BackendTest/obj/
+backend-crud-Functional/LogicTest/.ionide/
+backend-crud-Functional/LogicTest/bin/
+backend-crud-Functional/LogicTest/obj/
 
 backend-crud-Functional/Logic/bin/
 backend-crud-Functional/Logic/obj/
