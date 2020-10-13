@@ -1,12 +1,10 @@
 namespace RebelSoftware.Logic.EntryPoint
 
-open RebelSoftware.Logic.LogicTests
-
 module Program = 
     [<EntryPoint>]
     let main args = 
         //this entry point is the only way to debug unit tests
-        let testObj = LogicTest()
+        let testObj = RebelSoftware.Logic.Employee.LogicTest()
         testObj.Setup()
-        testObj.TestTest()
+        //testObj.TestTest()
         0

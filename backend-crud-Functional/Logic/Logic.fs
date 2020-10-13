@@ -8,7 +8,7 @@ module Employee =
 
     let private validate employee = 
         employee
-        |> Validation.getEmployeeValidator().ValidateEmployee 
+        |> Validation.getEmployeeValidator().ValidateEmployee //todo functional: remove getEmployeeValidator(), then remove this func
     
     let private produceResponse employee validationOpResult =
         match validationOpResult.ValidationResult = ValidationResults.Success with 
