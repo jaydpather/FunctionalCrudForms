@@ -19,7 +19,11 @@ module Employee =
             validationOpResult :> obj
             |> Output.JsonResponse
 
-    let insert employee = 
+    let insert employeeJsonString = 
+        let employee = 
+            employeeJsonString
+            |> Json.deserialize
+
         employee
         |> validate
         |> produceResponse employee

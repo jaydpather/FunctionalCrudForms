@@ -27,6 +27,11 @@ let handleException httpCtx ex =
         ()
     { ValidationResult = ValidationResults.UnknownError }
 
+//*  implement test insert_invalidInput
+//0. remove Output.LogFatal - we already catch exceptions in the controller
+//2. implement MqWaitAndCall
+//3. use decorator pattern for reusable try/catch block (or .NET, if it lets you write to response)
+
 //todo: look up RabbitMQ prod guidelines. (this code is based on the C# tutorial, which is not the best practice for prod)
 //todo: return error status to client if write to Rabbit MQ failed, or if microservice failed, or isn't running
 //todo: shared logging layer between backend and microservices?
@@ -34,7 +39,6 @@ let create httpCtx =
     try
         let output = 
             Http.readRequestBody httpCtx
-            |> Json.deserialize
             |> Employee.insert
         match output with 
         | Output.MqWaitResponse(object) -> 
@@ -51,7 +55,7 @@ let create httpCtx =
             |> handleException
             |> Json.serialize
             |> Http.writeHttpResponse httpCtx
-        | Output.MqOutput(object) -> 
+        | Output.MqOutput(objMQ, objHttp) -> 
             System.NotImplementedException ()
             |> raise 
     with
