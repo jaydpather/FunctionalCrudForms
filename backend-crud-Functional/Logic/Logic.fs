@@ -19,6 +19,11 @@ module Employee =
             validationOpResult :> obj
             |> Output.JsonResponse
 
+    let private funcAfterDbCall opResultJsonString = 
+        opResultJsonString
+        |> Json.deserialize<OperationResult> :> obj
+        |> Output.JsonResponse
+
     let insert employeeJsonString = 
         let employee = 
             employeeJsonString
@@ -27,3 +32,10 @@ module Employee =
         employee
         |> validate
         |> produceResponse employee
+
+    let insertAndCall employeeJsonString = 
+        let employee = 
+            employeeJsonString
+            |> Json.deserialize
+        //insert employee, even if invalid
+        Output.MqWaitAndCall (employee :> obj, funcAfterDbCall)

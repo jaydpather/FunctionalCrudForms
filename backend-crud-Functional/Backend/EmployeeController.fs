@@ -27,6 +27,28 @@ let handleException httpCtx ex =
         ()
     { ValidationResult = ValidationResults.UnknownError }
 
+let rec handleOutput output = 
+    match output with 
+    | Output.MqWaitResponse(object) -> 
+        object 
+        |> Json.serialize
+        |> MessageQueueing.writeMessageAndGetResponse
+    | Output.MqWaitAndCall(object, fn) -> 
+        object
+        |> Json.serialize
+        |> MessageQueueing.writeMessageAndGetResponse
+        |> fn
+        |> handleOutput
+    | Output.JsonResponse(object) ->
+        object
+        |> Json.serialize        
+    | Output.LogFatalError(ex) -> //todo: test this case
+        ex
+        |> handleException
+        |> Json.serialize
+    | Output.MqOutput(objMQ, objHttp) -> 
+        System.NotImplementedException ()
+        |> raise 
 //*  implement test insert_invalidInput
 //0. remove Output.LogFatal - we already catch exceptions in the controller
 //2. implement MqWaitAndCall
@@ -37,27 +59,10 @@ let handleException httpCtx ex =
 //todo: shared logging layer between backend and microservices?
 let create httpCtx =
     try
-        let output = 
-            Http.readRequestBody httpCtx
-            |> Employee.insert
-        match output with 
-        | Output.MqWaitResponse(object) -> 
-            object 
-            |> Json.serialize
-            |> MessageQueueing.writeMessageAndGetResponse
-            |> Http.writeHttpResponse httpCtx
-        | Output.JsonResponse(object) ->
-            object
-            |> Json.serialize        
-            |> Http.writeHttpResponse httpCtx
-        | Output.LogFatalError(ex) -> //todo: test this case
-            ex
-            |> handleException
-            |> Json.serialize
-            |> Http.writeHttpResponse httpCtx
-        | Output.MqOutput(objMQ, objHttp) -> 
-            System.NotImplementedException ()
-            |> raise 
+        Http.readRequestBody httpCtx
+        |> Employee.insertAndCall
+        |> handleOutput
+        |> Http.writeHttpResponse httpCtx        
     with
     | ex -> 
         handleException httpCtx ex

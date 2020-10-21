@@ -8,5 +8,4 @@ module Output =
         | MqWaitResponse of obj //serialize to JSON and write to MQ, wait for MQ response, and return that as HTTP Response
         | MqOutput of obj * obj //write first obj to MQ and write 2nd object to HTTP Response
         | LogFatalError of Exception
-        
-        //todo: | MqWaitAndCall of <obj, fn, type> //calls MQ, then calls a new logic layer function, deserializing the MQ response into an object of 'type'
+        | MqWaitAndCall of obj * (string -> Output) //calls MQ, waits for response, then passes response to function 
