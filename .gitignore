@@ -62,6 +62,26 @@ backend-crud/MessageQueueService/obj/
 backend-crud/SerializationService/bin/
 backend-crud/SerializationService/obj/
 
+backend-crud-Functional/Backend/.ionide/
+backend-crud-Functional/Backend/bin/
+backend-crud-Functional/Backend/obj/
+
+backend-crud-Functional/LogicTest/.ionide/
+backend-crud-Functional/LogicTest/bin/
+backend-crud-Functional/LogicTest/obj/
+
+backend-crud-Functional/Logic/bin/
+backend-crud-Functional/Logic/obj/
+
+backend-crud-Functional/LoggingService/bin/
+backend-crud-Functional/LoggingService/obj/
+
+backend-crud-Functional/MessageQueueService/bin/
+backend-crud-Functional/MessageQueueService/obj/
+
+backend-crud-Functional/SerializationService/bin/
+backend-crud-Functional/SerializationService/obj/
+
 backend-crud-CSharp/backend-crud-CSharp/.ionide/
 backend-crud-CSharp/backend-crud-CSharp/bin/
 backend-crud-CSharp/backend-crud-CSharp/obj/
