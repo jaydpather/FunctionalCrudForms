@@ -2,18 +2,17 @@ import { Employee, ValidationResults$$$get_New, ValidationResults$$$get_Success,
     ValidationResults$$$get_LastNameBlank } from '../fable-include/Model'
 
 export default class EmployeeLogicService {
+
     validateAndSubmit(validationFn, postToServerFn){ 
-        return async(employee, setValidationStateFn) => {
+        return function (employee, setValidationStateFn) {
             let opResult = validationFn(employee);
             
             if(ValidationResults$$$get_Success() == opResult.ValidationResult){
             //if(true){ //temp: allow posting of blank names, to test server-side validation
-                try{
-                    let response = await postToServerFn(employee);
-                    setValidationStateFn(response.data.ValidationResult);
-                }catch(ex){
-                    setValidationStateFn(ValidationResults$$$get_UnknownError());
-                }
+                let successFn = (response) => { setValidationStateFn(response.data.ValidationResult); }
+                let errorFn = function(error) { setValidationStateFn(ValidationResults$$$get_UnknownError()); }
+            
+                postToServerFn(employee, successFn, errorFn);
             }
             else{
                 setValidationStateFn(opResult.ValidationResult);
